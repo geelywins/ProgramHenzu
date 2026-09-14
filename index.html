@@ -4,10 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Program Akuntansi</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIxOCIgZmlsbD0iI2ZmZmZmZiIvPgo8cGF0aCBkPSJNNzYsMjQgQTM4LDM4IDAgMSwwIDc2LDc2IiBmaWxsPSJub25lIiBzdHJva2U9IiM0Q0FFOTMiIHN0cm9rZS13aWR0aD0iNS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHBhdGggZD0iTTc0LDI0IFE4OCwxNSA4NCw0IFE3Miw5IDY4LDE5IFE2OSwyMiA3NCwyNCBaIiBmaWxsPSIjNENBRTkzIi8+Cjx0ZXh0IHg9IjE3IiB5PSI2NyIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZvbnQtc2l6ZT0iNDQiIGZpbGw9IiM0Q0FFOTMiPkg8L3RleHQ+Cjx0ZXh0IHg9IjQ3IiB5PSI3MCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsJ1RpbWVzIE5ldyBSb21hbicsc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZvbnQtc3R5bGU9Iml0YWxpYyIgZm9udC1zaXplPSI1MCIgZmlsbD0iI0RFNjI1OSI+SjwvdGV4dD4KPHBhdGggZD0iTTc0LDU4IFE5OCw0OSA5NSwyMyBRODAsNDQgNjksNjEgUTcwLDYyIDc0LDU4IFoiIGZpbGw9IiM0Q0FFOTMiLz4KPHBhdGggZD0iTTcyLDY3IFE5NSw2NCA5Myw0OCBRNzgsNTcgNjcsNjkgUTY4LDcwIDcyLDY3IFoiIGZpbGw9IiM0Q0FFOTMiIG9wYWNpdHk9IjAuOTIiLz4KPHBhdGggZD0iTTcwLDc2IFE5MCw3OCA4Nyw2MyBRNzQsNjggNjUsNzggUTY2LDc5IDcwLDc2IFoiIGZpbGw9IiM0Q0FFOTMiIG9wYWNpdHk9IjAuODUiLz4KPC9zdmc+">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIxOCIgZmlsbD0iI2ZmZmZmZiIvPgo8cGF0aCBkPSJNNzYsMjQgQTM4LDM4IDAgMSwwIDc2LDc2IiBmaWxsPSJub25lIiBzdHJva2U9IiM0Q0FFOTMiIHN0cm9rZS13aWR0aD0iNS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPHBhdGggZD0iTTc0LDI0IFE4OCwxNSA4NCw0IFE3Miw5IDY4LDE5IFE2OSwyMiA3NCwyNCBaIiBmaWxsPSIjNENBRTkzIi8+Cjx0ZXh0IHg9IjE3IiB5PSI2NyIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSI5MDAiIGZvbnQtc2l6ZT0iNDQiIGZpbGw9IiM0Q0FFOTMiPkg8L3RleHQ+Cjx0ZXh0IHg9IjQ3IiB5PSI3MCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsJ1RpbWVzIE5ldyBSb21hbicsc2VyaWYiIGZvbnQtd2VpZ2h0PSI3MDAiIGZvbnQtc3R5bGU9Iml0YWxpYyIgZm9udC1zaXplPSI1MCIgZmlsbD0iI0RFNjI1OSI+SjwvdGV4dD4KPHBhdGggZD0iTTc0LDU4IFE5OCw0OSA5NSwyMyBRODAsNDQgNjksNjEgUTcwLDYyIDc0LDU4IFoiIGZpbGw9IiM0Q0FFOTMiLz4KPHBhdGggZD0iTTcyLDY3IFE5NSw2NCA5Myw0OCBRNzgsNTcgNjcsNjkgUTY4LDcwIDcyLDY3IFoiIGZpbGw9IiM0Q0FFOTMiIG9wYWNpdHk9IjAuOTIiLz4KPHBhdGggZD0iTTcwLDc2IFE5MCw3OCA4Nyw2MyBRNzQsNjggNjUsNzggUTY2LDc5IDcwLDc2IFoiIGZpbGw9IiM0Q0FFOTMiIG9wYWNpdHk9IjAuODUiLz4KPC9zdmc+">
+<link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiUHJvZ3JhbSBBa3VudGFuc2kgLSBQVCBIZW56dSBKYXlhIFNlamFodGVyYSIsInNob3J0X25hbWUiOiJBa3VudGFuc2kgSEpTIiwic3RhcnRfdXJsIjoiLiIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmZmZmYiLCJ0aGVtZV9jb2xvciI6IiM0Q0FFOTMiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCMmFXVjNRbTk0UFNJd0lEQWdNVEF3SURFd01DSWdlRzFzYm5NOUltaDBkSEE2THk5M2QzY3Vkek11YjNKbkx6SXdNREF2YzNabklqNEtQSEpsWTNRZ2QybGtkR2c5SWpFd01DSWdhR1ZwWjJoMFBTSXhNREFpSUhKNFBTSXhPQ0lnWm1sc2JEMGlJMlptWm1abVppSXZQZ284Y0dGMGFDQmtQU0pOTnpZc01qUWdRVE00TERNNElEQWdNU3d3SURjMkxEYzJJaUJtYVd4c1BTSnViMjVsSWlCemRISnZhMlU5SWlNMFEwRkZPVE1pSUhOMGNtOXJaUzEzYVdSMGFEMGlOUzQxSWlCemRISnZhMlV0YkdsdVpXTmhjRDBpY205MWJtUWlMejRLUEhCaGRHZ2daRDBpVFRjMExESTBJRkU0T0N3eE5TQTROQ3cwSUZFM01pdzVJRFk0TERFNUlGRTJPU3d5TWlBM05Dd3lOQ0JhSWlCbWFXeHNQU0lqTkVOQlJUa3pJaTgrQ2p4MFpYaDBJSGc5SWpFM0lpQjVQU0kyTnlJZ1ptOXVkQzFtWVcxcGJIazlJa0Z5YVdGc0xDQklaV3gyWlhScFkyRXNJSE5oYm5NdGMyVnlhV1lpSUdadmJuUXRkMlZwWjJoMFBTSTVNREFpSUdadmJuUXRjMmw2WlQwaU5EUWlJR1pwYkd3OUlpTTBRMEZGT1RNaVBrZzhMM1JsZUhRK0NqeDBaWGgwSUhnOUlqUTNJaUI1UFNJM01DSWdabTl1ZEMxbVlXMXBiSGs5SWtkbGIzSm5hV0VzSjFScGJXVnpJRTVsZHlCU2IyMWhiaWNzYzJWeWFXWWlJR1p2Ym5RdGQyVnBaMmgwUFNJM01EQWlJR1p2Ym5RdGMzUjViR1U5SW1sMFlXeHBZeUlnWm05dWRDMXphWHBsUFNJMU1DSWdabWxzYkQwaUkwUkZOakkxT1NJK1Nqd3ZkR1Y0ZEQ0S1BIQmhkR2dnWkQwaVRUYzBMRFU0SUZFNU9DdzBPU0E1TlN3eU15QlJPREFzTkRRZ05qa3NOakVnVVRjd0xEWXlJRGMwTERVNElGb2lJR1pwYkd3OUlpTTBRMEZGT1RNaUx6NEtQSEJoZEdnZ1pEMGlUVGN5TERZM0lGRTVOU3cyTkNBNU15dzBPQ0JSTnpnc05UY2dOamNzTmprZ1VUWTRMRGN3SURjeUxEWTNJRm9pSUdacGJHdzlJaU0wUTBGRk9UTWlJRzl3WVdOcGRIazlJakF1T1RJaUx6NEtQSEJoZEdnZ1pEMGlUVGN3TERjMklGRTVNQ3czT0NBNE55dzJNeUJSTnpRc05qZ2dOalVzTnpnZ1VUWTJMRGM1SURjd0xEYzJJRm9pSUdacGJHdzlJaU0wUTBGRk9UTWlJRzl3WVdOcGRIazlJakF1T0RVaUx6NEtQQzl6ZG1jKyIsInNpemVzIjoiYW55IiwidHlwZSI6ImltYWdlL3N2Zyt4bWwiLCJwdXJwb3NlIjoiYW55IG1hc2thYmxlIn1dfQ==">
+<meta name="theme-color" content="#4CAE93">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf-autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root{
@@ -40,7 +44,7 @@
   .navitem:hover{background:rgba(255,255,255,.06);color:#fff;}
   .navitem.active{background:rgba(18,150,126,.18);border-left-color:var(--teal);color:#fff;font-weight:600;}
   #main{flex:1;min-width:0;}
-  #topbar{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 28px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;}
+  #topbar{background:var(--panel);border-bottom:1px solid var(--line);padding:14px 28px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:50;}
   #topbar h1{font-size:18px;margin:0;font-weight:700;letter-spacing:-.01em;}
   #topbar .meta{font-size:12.5px;color:var(--sub);}
   .hdrmenus{display:flex;gap:8px;}
@@ -136,10 +140,30 @@
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;}
   ::-webkit-scrollbar{width:9px;height:9px;} ::-webkit-scrollbar-thumb{background:#c7cdcc;border-radius:5px;}
   @media print{ #sidebar,#topbar{display:none;} #content{padding:0;} .card{border:none;box-shadow:none;} .btn,.tabs,form{display:none !important;} }
+  #login-screen{position:fixed;inset:0;background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 60%,var(--teal-dark) 130%);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;}
+  .login-box{background:#fff;border-radius:14px;padding:34px 32px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center;}
+  .login-logo{width:76px;height:76px;margin:0 auto 14px;}
+  .login-logo svg{width:100%;height:100%;}
+  .login-box h2{font-size:16px;margin:0 0 20px;color:var(--ink);}
+  .login-box .field{text-align:left;}
+  .login-error{color:var(--red);font-size:12.5px;min-height:16px;margin:4px 0;}
+  .login-hint{font-size:11.5px;color:var(--sub);margin-top:14px;line-height:1.5;}
 </style>
 </head>
 <body>
-<div id="shell">
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo" id="loginLogo"></div>
+    <h2 id="login-title">Masuk ke Program Akuntansi</h2>
+    <form id="form-login">
+      <div class="field"><label>Username</label><input type="text" name="username" required autocomplete="username"></div>
+      <div class="field"><label>Password</label><input type="password" name="password" required autocomplete="current-password"></div>
+      <div id="login-error" class="login-error"></div>
+      <button class="btn btn-primary" type="submit" style="width:100%;margin-top:6px;">Masuk</button>
+    </form>
+  </div>
+</div>
+<div id="shell" style="display:none;">
   <div id="sidebar-backdrop" data-action="closeSidebar"></div>
   <div id="sidebar">
     <div class="brand"><div class="logo" id="brandLogo"></div><div><b id="brandName">Perusahaan</b><span>Program Akuntansi</span></div></div>
@@ -154,19 +178,22 @@
 <input type="file" id="file-import-coa" accept=".csv,.xlsx,.xls" style="display:none">
 <input type="file" id="file-import-customers" accept=".csv,.xlsx,.xls" style="display:none">
 <input type="file" id="file-import-vendors" accept=".csv,.xlsx,.xls" style="display:none">
+
 <input type="file" id="file-import-items" accept=".csv,.xlsx,.xls" style="display:none">
 <input type="file" id="file-import-penjualan" accept=".csv,.xlsx,.xls" style="display:none">
 <input type="file" id="file-import-pembelian" accept=".csv,.xlsx,.xls" style="display:none">
+<input type="file" id="file-import-saldoawal" accept=".csv,.xlsx,.xls" style="display:none">
 
 <script>
 /* ============================= CONSTANTS ============================= */
 const NAV_ICONS = {
   dashboard:'📊',
-  'setup-perusahaan':'🏢','setup-preferensi':'⚙️','setup-akun':'📗','setup-pelanggan':'👥','setup-pemasok':'🚚','setup-barang':'📦','setup-aset':'🏗️','setup-saldoawal':'🧾',
+  'setup-perusahaan':'🏢','setup-preferensi':'⚙️','setup-akun':'📗','setup-pelanggan':'👥','setup-pemasok':'🚚','setup-barang':'📦','setup-aset':'🏗️','setup-saldoawal':'🧾','setup-tutupbuku':'🔒',
   pembelian:'🛒',penjualan:'💵',otorisasi:'✅',stock:'📦',hutangpiutang:'🤝',uangmuka:'💰',retur:'↩️',kasbank:'🏦',biaya:'🧾',
   jurnal:'📒',bukubesar:'📘',bukubesarpiutang:'📗',bukubesarhutang:'📕',kartupiutang:'📇',kartuhutang:'📇',
   pelunasanpiutang:'✔️',pelunasanhutang:'✔️',neracasaldo:'⚖️',neracabulan:'⚖️',neracaakhir:'⚖️',
-  labarugi:'📈',kumulatif:'📈',rincian:'🔎',laporanpenjualan:'🧮',
+  labarugi:'📈',kumulatif:'📈',rincian:'🔎',laporanpenjualan:'🧮',laporanpembelian:'🧮',perbandingan:'🆚',
+  'setup-users':'🔐',
   data:'🗄️',
 };
 const NAV = [
@@ -174,7 +201,7 @@ const NAV = [
   {group:'Setup', items:[
     ['setup-perusahaan','Data Perusahaan'],['setup-preferensi','Preferensi Akuntansi'],
     ['setup-akun','Daftar Akun (COA)'],['setup-pelanggan','Daftar Pelanggan'],['setup-pemasok','Daftar Pemasok'],
-    ['setup-barang','Daftar Barang'],['setup-aset','Aset Tetap'],['setup-saldoawal','Ringkasan Saldo Awal']
+    ['setup-barang','Daftar Barang'],['setup-aset','Aset Tetap'],['setup-saldoawal','Ringkasan Saldo Awal'],['setup-tutupbuku','Tutup Buku']
   ]},
   {group:'Pencatatan', items:[
     ['pembelian','Pembelian'],['penjualan','Penjualan'],['otorisasi','Otorisasi Penjualan'],['stock','Stock / Persediaan'],
@@ -187,8 +214,9 @@ const NAV = [
     ['pelunasanpiutang','Daftar Pelunasan Piutang'],['pelunasanhutang','Daftar Pelunasan Hutang'],
     ['neracasaldo','Neraca Saldo'],['neracabulan','Neraca Bulan Berjalan'],['neracaakhir','Neraca Akhir Tahun'],
     ['labarugi','Laba Rugi Tahun Berjalan'],['kumulatif','Laporan Kumulatif'],
-    ['rincian','Rincian Laporan Keuangan'],['laporanpenjualan','Laporan Penjualan']
+    ['rincian','Rincian Laporan Keuangan'],['laporanpenjualan','Laporan Penjualan'],['laporanpembelian','Laporan Pembelian'],['perbandingan','Perbandingan Laporan (Super Admin)']
   ]},
+  {group:'Administrasi', items:[['setup-users','Manajemen User']]},
   {group:'Data', items:[['data','Pusat Data']]},
 ];
 const DATA_TILES = [
@@ -208,98 +236,143 @@ const DATA_TILES = [
 const TITLES = {}; NAV.forEach(g=>g.items.forEach(([id,l])=>TITLES[id]=l));
 
 const DEFAULT_COA = [
-  // ===== AKTIVA LANCAR =====
-  {code:'1000',name:'Kas',type:'ASET',kelompok:'Kas & Bank'},
-  {code:'1010',name:'Bank BCA',type:'ASET',kelompok:'Kas & Bank'},
-  {code:'1103',name:'Uang Muka Pembelian',type:'ASET',kelompok:'Aktiva Lancar Lainnya'},
-  {code:'1104',name:'Biaya Dibayar Dimuka',type:'ASET',kelompok:'Aktiva Lancar Lainnya'},
-  {code:'1100',name:'Piutang Usaha',type:'ASET',kelompok:'Piutang'},
-  {code:'1106',name:'Piutang Karyawan',type:'ASET',kelompok:'Piutang'},
-  {code:'1107',name:'Piutang Lain-lain',type:'ASET',kelompok:'Piutang'},
-  {code:'1108',name:'Piutang Kepada Manajemen',type:'ASET',kelompok:'Piutang'},
-  {code:'1300',name:'PPN Masukan',type:'ASET',kelompok:'Aktiva Lancar Lainnya'},
-  {code:'1200',name:'Persediaan Barang Dagang',type:'ASET',kelompok:'Persediaan'},
+  // ===== AKTIVA LANCAR ===== (saldo per 31 Agustus 2026, sesuai RINCIAN_LAPORAN_KEUANGAN_PERIODE_08_2026)
+  {code:'1000',name:'Kas',type:'ASET',kelompok:'Kas & Bank',saldoAwal:33820853.79},
+  {code:'1010',name:'Bank BCA',type:'ASET',kelompok:'Kas & Bank',saldoAwal:464204943.99},
+  {code:'1103',name:'Uang Muka Pembelian',type:'ASET',kelompok:'Aktiva Lancar Lainnya',saldoAwal:995406},
+  {code:'1100',name:'Piutang Usaha',type:'ASET',kelompok:'Piutang',saldoAwal:338305900},
+  {code:'1300',name:'PPN Masukan',type:'ASET',kelompok:'Aktiva Lancar Lainnya',saldoAwal:0},
+  {code:'1200',name:'Persediaan Barang Dagang',type:'ASET',kelompok:'Persediaan',saldoAwal:1762305200},
   // ===== AKTIVA TETAP =====
-  {code:'1201',name:'Inventaris Kantor - Kelompok 1',type:'ASET',kelompok:'Aktiva Tetap Kelompok 1'},
-  {code:'1202',name:'Inventaris & Kendaraan - Kelompok 2',type:'ASET',kelompok:'Aktiva Tetap Kelompok 2'},
-  {code:'1900',name:'Peralatan & Inventaris Lainnya',type:'ASET',kelompok:'Aktiva Tetap Kelompok 1'},
-  {code:'1205',name:'Akumulasi Penyusutan Kelompok 1',type:'KONTRA_ASET',kelompok:'Aktiva Tetap Kelompok 1'},
-  {code:'1206',name:'Akumulasi Penyusutan Kelompok 2',type:'KONTRA_ASET',kelompok:'Aktiva Tetap Kelompok 2'},
-  {code:'1901',name:'Akumulasi Penyusutan Peralatan Lainnya',type:'KONTRA_ASET',kelompok:'Aktiva Tetap Kelompok 1'},
-  // ===== HUTANG USAHA =====
-  {code:'2000',name:'Hutang Dagang',type:'KEWAJIBAN',kelompok:'Hutang Usaha'},
-  {code:'2102',name:'Hutang Management',type:'KEWAJIBAN',kelompok:'Hutang Lainnya'},
-  {code:'2050',name:'Angsuran Kendaraan',type:'KEWAJIBAN',kelompok:'Hutang Lainnya'},
-  {code:'2103',name:'Hutang Biaya (Gaji/Komisi/Sewa)',type:'KEWAJIBAN',kelompok:'Hutang Lainnya'},
-  {code:'2200',name:'Hutang Pajak PPh Badan',type:'KEWAJIBAN',kelompok:'Hutang Pajak'},
-  {code:'2201',name:'Hutang Pajak PPh 21/23/25',type:'KEWAJIBAN',kelompok:'Hutang Pajak'},
-  {code:'2100',name:'PPN Keluaran',type:'KEWAJIBAN',kelompok:'Hutang Pajak'},
-  {code:'2106',name:'Hutang Uang Muka Penjualan',type:'KEWAJIBAN',kelompok:'Hutang Lainnya'},
-  {code:'2107',name:'Hutang Jangka Panjang (Bank)',type:'KEWAJIBAN',kelompok:'Hutang Jangka Panjang'},
+  {code:'1900',name:'Peralatan & Inventaris (Aset Baru)',type:'ASET',kelompok:'Aktiva Tetap Kelompok 1',saldoAwal:0},
+  {code:'1901',name:'Akumulasi Penyusutan Aset Baru',type:'KONTRA_ASET',kelompok:'Aktiva Tetap Kelompok 1',saldoAwal:0},
+  {code:'1201001',name:'Office Equipment - Kel 1',type:'ASET',kelompok:'Aktiva Tetap Kelompok 1',saldoAwal:125448860},
+  {code:'1201002',name:'Furniture - Kel 1',type:'ASET',kelompok:'Aktiva Tetap Kelompok 1',saldoAwal:692900},
+  {code:'1202000',name:'Furniture dari Logam - Kel 2',type:'ASET',kelompok:'Aktiva Tetap Kelompok 2',saldoAwal:90138300},
+  {code:'1202001',name:'Kendaraan - Kel 2',type:'ASET',kelompok:'Aktiva Tetap Kelompok 2',saldoAwal:410220748},
+  {code:'1205000',name:'Penyusutan Office Equipment - Kel 1',type:'KONTRA_ASET',kelompok:'Aktiva Tetap Kelompok 1',saldoAwal:173369786.72},
+  {code:'1205001',name:'Penyusutan Furniture - Kel 1',type:'KONTRA_ASET',kelompok:'Aktiva Tetap Kelompok 1',saldoAwal:44381625.36},
+  {code:'1206000',name:'Penyusutan Furnitur dari Logam - Kel 2',type:'KONTRA_ASET',kelompok:'Aktiva Tetap Kelompok 2',saldoAwal:2748333},
+  {code:'1206001',name:'Penyusutan Kendaraan - Kel 2',type:'KONTRA_ASET',kelompok:'Aktiva Tetap Kelompok 2',saldoAwal:85986602.4},
+  // ===== HUTANG =====
+  {code:'2000',name:'Hutang Dagang',type:'KEWAJIBAN',kelompok:'Hutang Usaha',saldoAwal:1382028609.83},
+  {code:'2102002',name:'Angsuran Kendaraan',type:'KEWAJIBAN',kelompok:'Hutang Lainnya',saldoAwal:153101100},
+  {code:'210501',name:'Hutang Pajak PPh Pasal 21',type:'KEWAJIBAN',kelompok:'Hutang Pajak',saldoAwal:2246763},
+  {code:'210503',name:'Hutang Pajak PPh Pasal 25',type:'KEWAJIBAN',kelompok:'Hutang Pajak',saldoAwal:7382972},
+  {code:'2100',name:'PPN (Pajak Pertambahan Nilai)',type:'KEWAJIBAN',kelompok:'Hutang Pajak',saldoAwal:12920808.31},
+  {code:'2106',name:'Hutang Uang Muka Penjualan',type:'KEWAJIBAN',kelompok:'Hutang Lainnya',saldoAwal:21030064},
+  {code:'210701',name:'Hutang Bank BCA',type:'KEWAJIBAN',kelompok:'Hutang Jangka Panjang',saldoAwal:-35227545},
+  {code:'210702',name:'Hutang Bank BTN',type:'KEWAJIBAN',kelompok:'Hutang Jangka Panjang',saldoAwal:443537425},
   // ===== MODAL =====
-  {code:'3000',name:'Modal Pemilik',type:'MODAL',kelompok:'Modal'},
-  {code:'3102',name:'Sisa Laba/Rugi Tahun Lalu',type:'MODAL',kelompok:'Modal'},
-  {code:'3104',name:'Laba/Rugi Bulan Berjalan',type:'MODAL',kelompok:'Modal'},
-  {code:'3900',name:'Laba Ditahan (Saldo Awal Sistem)',type:'MODAL',kelompok:'Modal'},
+  {code:'3101001',name:'Modal An. Hendri Suwandi',type:'MODAL',kelompok:'Modal',saldoAwal:37500000},
+  {code:'3101002',name:'Modal An. Anastasia Sukemi',type:'MODAL',kelompok:'Modal',saldoAwal:37500000},
+  {code:'3102001',name:'Sisa Laba/Rugi Tahun Lalu',type:'MODAL',kelompok:'Modal',saldoAwal:616101749.77},
+  {code:'3103001',name:'Laba/Rugi Thn Berjalan s/d Bln Lalu',type:'MODAL',kelompok:'Modal',saldoAwal:206472954.36},
+  {code:'3104001',name:'Laba/Rugi Bulan Berjalan',type:'MODAL',kelompok:'Modal',saldoAwal:35051863.03},
+  {code:'3900',name:'Laba Ditahan (Penyeimbang Sistem)',type:'MODAL',kelompok:'Modal',saldoAwal:0},
   // ===== PENDAPATAN =====
-  {code:'4000',name:'Penjualan Barang Dagang',type:'PENDAPATAN',kelompok:'Penjualan'},
-  {code:'4010',name:'Penjualan Jasa',type:'PENDAPATAN',kelompok:'Penjualan'},
-  {code:'4102',name:'Diskon Penjualan',type:'KONTRA_PENDAPATAN',kelompok:'Penjualan'},
-  {code:'4103',name:'Retur Penjualan',type:'KONTRA_PENDAPATAN',kelompok:'Penjualan'},
+  {code:'4000',name:'Pendapatan Usaha',type:'PENDAPATAN',kelompok:'Penjualan',saldoAwal:10830897586.16},
+  {code:'4102',name:'Diskon Penjualan',type:'KONTRA_PENDAPATAN',kelompok:'Penjualan',saldoAwal:0},
+  {code:'4103',name:'Retur Penjualan',type:'KONTRA_PENDAPATAN',kelompok:'Penjualan',saldoAwal:0},
   // ===== HARGA POKOK PENJUALAN =====
-  {code:'5000',name:'Harga Pokok Penjualan',type:'HPP',kelompok:'Harga Pokok Penjualan'},
-  {code:'5101',name:'Pembelian',type:'HPP',kelompok:'Harga Pokok Penjualan'},
-  {code:'5102',name:'Retur Pembelian',type:'KONTRA_HPP',kelompok:'Harga Pokok Penjualan'},
-  {code:'5103',name:'Potongan Pembelian',type:'KONTRA_HPP',kelompok:'Harga Pokok Penjualan'},
+  {code:'5000',name:'Harga Pokok Penjualan',type:'HPP',kelompok:'Harga Pokok Penjualan',saldoAwal:0},
+  {code:'5101',name:'Pembelian',type:'HPP',kelompok:'Harga Pokok Penjualan',saldoAwal:9495265006.39},
+  {code:'5102',name:'Retur & Potongan Pembelian',type:'KONTRA_HPP',kelompok:'Harga Pokok Penjualan',saldoAwal:7782937},
   // ===== BIAYA OPERASIONAL =====
-  {code:'6101',name:'Biaya Gaji & THR',type:'BEBAN',kelompok:'Biaya Gaji & THR'},
-  {code:'6120',name:'Komisi Penjualan',type:'BEBAN',kelompok:'Biaya Gaji & THR'},
-  {code:'6102',name:'Biaya Administrasi & ATK',type:'BEBAN',kelompok:'Biaya Administrasi & ATK'},
-  {code:'6103',name:'Biaya Transportasi (BBM/Toll/Parkir)',type:'BEBAN',kelompok:'Biaya Transportasi'},
-  {code:'6104',name:'Biaya Telepon & Internet',type:'BEBAN',kelompok:'Biaya Telepon & Internet'},
-  {code:'6105',name:'Biaya Listrik',type:'BEBAN',kelompok:'Biaya Utilitas'},
-  {code:'6106',name:'Biaya Air PAM',type:'BEBAN',kelompok:'Biaya Utilitas'},
-  {code:'6107',name:'Biaya Pemeliharaan Kendaraan',type:'BEBAN',kelompok:'Biaya Pemeliharaan'},
-  {code:'6108',name:'Biaya Pemeliharaan & Kebersihan Kantor',type:'BEBAN',kelompok:'Biaya Pemeliharaan'},
-  {code:'6126',name:'Biaya Pemeliharaan Equipment',type:'BEBAN',kelompok:'Biaya Pemeliharaan'},
-  {code:'6109',name:'Biaya Kirim Barang',type:'BEBAN',kelompok:'Biaya Distribusi'},
-  {code:'6113',name:'Biaya Packing, Seal & Stiker',type:'BEBAN',kelompok:'Biaya Distribusi'},
-  {code:'6010',name:'Biaya Sewa Kantor & Kendaraan',type:'BEBAN',kelompok:'Biaya Sewa'},
-  {code:'6112',name:'Biaya Brosur & Flyer',type:'BEBAN',kelompok:'Biaya Pemasaran'},
-  {code:'6114',name:'Biaya Asuransi & BPJS TK',type:'BEBAN',kelompok:'Biaya Asuransi'},
-  {code:'6115',name:'Biaya Perizinan',type:'BEBAN',kelompok:'Biaya Perizinan'},
-  {code:'6116',name:'Biaya Entertainment & Konsumsi',type:'BEBAN',kelompok:'Biaya Umum Kantor'},
-  {code:'6118',name:'Biaya Materai',type:'BEBAN',kelompok:'Biaya Umum Kantor'},
-  {code:'6095',name:'Selisih Stok Opname',type:'BEBAN',kelompok:'Biaya Umum Kantor'},
-  {code:'6117',name:'Biaya Kesehatan / Medical',type:'BEBAN',kelompok:'Biaya Karyawan'},
-  {code:'6119',name:'Biaya Pajak PPh 21 & Denda',type:'BEBAN',kelompok:'Biaya Pajak'},
-  {code:'6030',name:'Biaya Penyusutan Aset Tetap',type:'BEBAN',kelompok:'Biaya Penyusutan'},
-  {code:'6090',name:'Biaya Lain-lain',type:'BEBAN',kelompok:'Biaya Lain-lain'},
+  {code:'6101000',name:'Biaya Gaji Manajemen',type:'BEBAN',kelompok:'Biaya Gaji & THR',saldoAwal:210000000},
+  {code:'6101001',name:'Biaya Gaji Karyawan Tetap',type:'BEBAN',kelompok:'Biaya Gaji & THR',saldoAwal:196960000},
+  {code:'6101003',name:'Biaya THR',type:'BEBAN',kelompok:'Biaya Gaji & THR',saldoAwal:17330000},
+  {code:'6101004',name:'Komisi/Fee Penjualan (OP)',type:'BEBAN',kelompok:'Biaya Gaji & THR',saldoAwal:142580000},
+  {code:'6102000',name:'Biaya Administrasi Kantor',type:'BEBAN',kelompok:'Biaya Administrasi & ATK',saldoAwal:20000000},
+  {code:'6102001',name:'Biaya Alat Tulis Kantor',type:'BEBAN',kelompok:'Biaya Administrasi & ATK',saldoAwal:24270600},
+  {code:'6103000',name:'Biaya BBM',type:'BEBAN',kelompok:'Biaya Transportasi',saldoAwal:20539875},
+  {code:'6103001',name:'Biaya Toll',type:'BEBAN',kelompok:'Biaya Transportasi',saldoAwal:10923320},
+  {code:'6103002',name:'Biaya Parkir',type:'BEBAN',kelompok:'Biaya Transportasi',saldoAwal:9488200},
+  {code:'6103003',name:'Biaya Tiket Perjalanan Dinas',type:'BEBAN',kelompok:'Biaya Transportasi',saldoAwal:39228700},
+  {code:'6104000',name:'Biaya Telepon Kantor',type:'BEBAN',kelompok:'Biaya Telepon & Internet',saldoAwal:3279194},
+  {code:'6104001',name:'Biaya Telepon HP Manajemen',type:'BEBAN',kelompok:'Biaya Telepon & Internet',saldoAwal:4847596},
+  {code:'6105000',name:'Biaya Listrik Kantor',type:'BEBAN',kelompok:'Biaya Utilitas',saldoAwal:8537313},
+  {code:'6107000',name:'Biaya Pemeliharaan Kendaraan',type:'BEBAN',kelompok:'Biaya Pemeliharaan',saldoAwal:19231000},
+  {code:'6108000',name:'Biaya Pemeliharaan Kantor',type:'BEBAN',kelompok:'Biaya Pemeliharaan',saldoAwal:57483000},
+  {code:'6108001',name:'Biaya Kebersihan Kantor',type:'BEBAN',kelompok:'Biaya Pemeliharaan',saldoAwal:2353400},
+  {code:'6109000',name:'Biaya Kirim Barang',type:'BEBAN',kelompok:'Biaya Distribusi',saldoAwal:18097500},
+  {code:'6110000',name:'Biaya Sewa Kantor',type:'BEBAN',kelompok:'Biaya Sewa',saldoAwal:65000000},
+  {code:'6112000',name:'Biaya Brosur',type:'BEBAN',kelompok:'Biaya Pemasaran',saldoAwal:5763000},
+  {code:'6112001',name:'Biaya Flyer',type:'BEBAN',kelompok:'Biaya Pemasaran',saldoAwal:5803400},
+  {code:'6113000',name:'Biaya Packing',type:'BEBAN',kelompok:'Biaya Distribusi',saldoAwal:4822700},
+  {code:'6113002',name:'Biaya Stiker',type:'BEBAN',kelompok:'Biaya Distribusi',saldoAwal:100000},
+  {code:'6114000',name:'Biaya Asuransi',type:'BEBAN',kelompok:'Biaya Asuransi',saldoAwal:2888750},
+  {code:'6114001',name:'Biaya Asuransi - BPJS TK',type:'BEBAN',kelompok:'Biaya Asuransi',saldoAwal:9459600},
+  {code:'6116000',name:'Biaya Entertainment',type:'BEBAN',kelompok:'Biaya Umum Kantor',saldoAwal:37197800},
+  {code:'6116001',name:'Biaya Konsumsi (Jamuan)',type:'BEBAN',kelompok:'Biaya Umum Kantor',saldoAwal:20239100},
+  {code:'6116002',name:'Biaya Air Minum Kantor',type:'BEBAN',kelompok:'Biaya Umum Kantor',saldoAwal:4476600},
+  {code:'6117000',name:'Biaya Kesehatan / Medical',type:'BEBAN',kelompok:'Biaya Karyawan',saldoAwal:2278400},
+  {code:'6118000',name:'Biaya Materai',type:'BEBAN',kelompok:'Biaya Umum Kantor',saldoAwal:650000},
+  {code:'6119000',name:'Biaya Pajak PPh 21',type:'BEBAN',kelompok:'Biaya Pajak',saldoAwal:17350626},
+  {code:'6119001',name:'Biaya Pajak Denda STP',type:'BEBAN',kelompok:'Biaya Pajak',saldoAwal:83643},
+  {code:'6125000',name:'Biaya Penyusutan Kel-1',type:'BEBAN',kelompok:'Biaya Penyusutan',saldoAwal:29396086.08},
+  {code:'6125001',name:'Biaya Penyusutan Kel-2',type:'BEBAN',kelompok:'Biaya Penyusutan',saldoAwal:31901183.4},
+  {code:'6030',name:'Biaya Penyusutan Aset Baru',type:'BEBAN',kelompok:'Biaya Penyusutan',saldoAwal:0},
+  {code:'6095',name:'Selisih Stok Opname',type:'BEBAN',kelompok:'Biaya Umum Kantor',saldoAwal:0},
   // ===== PENDAPATAN & BIAYA LAIN-LAIN =====
-  {code:'7101',name:'Pendapatan Bunga Bank / Jasa Giro',type:'PENDAPATAN',kelompok:'Pendapatan Lain-lain'},
-  {code:'7108',name:'Pendapatan Selisih Kurs',type:'PENDAPATAN',kelompok:'Pendapatan Lain-lain'},
-  {code:'7102',name:'Biaya Administrasi Bank',type:'BEBAN',kelompok:'Biaya Lain-lain'},
-  {code:'7103',name:'Biaya Bunga Pinjaman Bank',type:'BEBAN',kelompok:'Biaya Lain-lain'},
-  // ===== PAJAK & POS LUAR BIASA =====
-  {code:'8101',name:'Pos-pos Luar Biasa',type:'BEBAN',kelompok:'Pos Luar Biasa'},
-  {code:'9101',name:'Estimasi Pajak PPh Badan',type:'BEBAN',kelompok:'Pajak Penghasilan Badan'},
+  {code:'7101000',name:'Pendapatan Bunga Bank',type:'PENDAPATAN',kelompok:'Pendapatan Lain-lain',saldoAwal:2225370.99},
+  {code:'7101002',name:'Selisih PPN',type:'PENDAPATAN',kelompok:'Pendapatan Lain-lain',saldoAwal:900055.8},
+  {code:'7101090',name:'Pendapatan Lain-lain',type:'PENDAPATAN',kelompok:'Pendapatan Lain-lain',saldoAwal:761949},
+  {code:'7102000',name:'Biaya Pajak Bunga Bank',type:'BEBAN',kelompok:'Biaya Lain-lain',saldoAwal:445074.19},
+  {code:'7102001',name:'Biaya Bank',type:'BEBAN',kelompok:'Biaya Lain-lain',saldoAwal:237900},
+  {code:'7102008',name:'Biaya Selisih Kurs',type:'BEBAN',kelompok:'Biaya Lain-lain',saldoAwal:-348},
+  {code:'7102090',name:'Biaya Lain-lain',type:'BEBAN',kelompok:'Biaya Lain-lain',saldoAwal:14134208.5},
+  {code:'7103000',name:'Biaya Bunga Pinjaman Bank',type:'BEBAN',kelompok:'Biaya Lain-lain',saldoAwal:-215},
+  // ===== PAJAK =====
+  {code:'9101000',name:'Pajak PPh Badan',type:'BEBAN',kelompok:'Pajak Penghasilan Badan',saldoAwal:46845497},
 ];
 const NORMAL_DEBIT = {ASET:1,HPP:1,BEBAN:1,KONTRA_ASET:0,KEWAJIBAN:0,MODAL:0,PENDAPATAN:0,KONTRA_PENDAPATAN:1,KONTRA_HPP:0};
 const MONTH_NAMES = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 const LOGO_SVG = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-  <circle cx="50" cy="50" r="47" fill="#ffffff" stroke="#1c2a52" stroke-width="1.3"/>
-  <circle cx="50" cy="50" r="42.5" fill="none" stroke="#1c2a52" stroke-width="0.7"/>
-  <circle cx="50" cy="52" r="36" fill="#1c2a52"/>
-  <path id="lgRibbon" d="M13,60 A40,40 0 0,0 40,92" fill="none" stroke="#e3a75c" stroke-width="8.5" stroke-linecap="round"/>
-  <circle cx="13" cy="60" r="4.3" fill="#e3a75c"/><circle cx="40" cy="92" r="4.3" fill="#e3a75c"/>
-  <text font-size="4.6" font-weight="700" fill="#1c2a52" letter-spacing=".2"><textPath href="#lgRibbon" startOffset="2">PT. HENZU JAYA SEJAHTERA</textPath></text>
-  <text x="50" y="45" text-anchor="middle" font-size="19" font-weight="800" fill="#e3a75c" font-family="Georgia,'Segoe Print',serif" transform="rotate(-6 50 45)">Global</text>
-  <text x="53" y="66" text-anchor="middle" font-size="15.5" font-weight="800" fill="#93a35a" font-family="Georgia,'Segoe Print',serif" transform="rotate(-3 53 66)">Vaksin</text>
-  <circle cx="77" cy="78" r="14" fill="#1c2a52" stroke="#ffffff" stroke-width="2.2"/>
-  <text x="77" y="83.5" text-anchor="middle" font-size="13">💉</text>
+  <path d="M76,24 A38,38 0 1,0 76,76" fill="none" stroke="#4CAE93" stroke-width="5.5" stroke-linecap="round"/>
+  <path d="M74,24 Q88,15 84,4 Q72,9 68,19 Q69,22 74,24 Z" fill="#4CAE93"/>
+  <text x="17" y="67" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="44">
+    <tspan fill="#4CAE93">H</tspan>
+  </text>
+  <text x="47" y="70" font-family="Georgia,'Times New Roman',serif" font-weight="700" font-style="italic" font-size="50" fill="#DE6259">J</text>
+  <path d="M74,58 Q98,49 95,23 Q80,44 69,61 Q70,62 74,58 Z" fill="#4CAE93"/>
+  <path d="M72,67 Q95,64 93,48 Q78,57 67,69 Q68,70 72,67 Z" fill="#4CAE93" opacity="0.92"/>
+  <path d="M70,76 Q90,78 87,63 Q74,68 65,78 Q66,79 70,76 Z" fill="#4CAE93" opacity="0.85"/>
 </svg>`;
 
-let S = { coa:[], journal:[], items:[], sales:[], purchases:[], assets:[], customers:[], vendors:[], returs:[], dpReceived:[], dpPaid:[], meta:{}, tab:'dashboard', draft:{} };
+/* ============================= ROLES & PERMISSIONS ============================= */
+const ROLES = { superadmin:'Super Admin', admin:'Admin', pembelian:'Staff Pembelian' };
+const ALLOWED_TABS = {
+  superadmin: null, // null = semua tab diizinkan
+  admin: null, // full akses laporan & pencatatan, tapi tidak bisa otorisasi/tutup buku/kelola user (dicegat lewat hasPermission)
+  pembelian: ['dashboard','pembelian','setup-pemasok','stock','bukubesarpiutang','laporanpembelian'],
+};
+async function hashPassword(pw){
+  try{
+    const enc = new TextEncoder().encode(pw);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }catch(e){ return 'plain:'+pw; } // fallback kalau crypto.subtle tak tersedia (mis. konteks non-HTTPS)
+}
+function hasPermission(action){
+  if(!currentUser) return false;
+  if(currentUser.role==='superadmin') return true;
+  const adminAllowed = ['viewAllReports','inputTransaksi','editMasterData'];
+  const pembelianAllowed = ['inputPembelian','tambahSupplier','exportOnly'];
+  if(currentUser.role==='admin') return adminAllowed.includes(action);
+  if(currentUser.role==='pembelian') return pembelianAllowed.includes(action);
+  return false;
+}
+const SUPERADMIN_ONLY_TABS = ['setup-users','perbandingan'];
+function tabAllowed(tab, role){
+  if(SUPERADMIN_ONLY_TABS.includes(tab)) return role==='superadmin';
+  const list = ALLOWED_TABS[role];
+  if(list===null || list===undefined) return true;
+  return list.includes(tab);
+}
+
+let S = { coa:[], journal:[], items:[], sales:[], purchases:[], assets:[], customers:[], vendors:[], returs:[], dpReceived:[], dpPaid:[], users:[], activityLog:[], meta:{}, tab:'dashboard', draft:{} };
+let currentUser = null;
 
 /* ============================= STORAGE ============================= */
 async function loadKey(key, fallback){
@@ -312,23 +385,38 @@ async function saveKey(key, value){
 }
 async function loadAll(){
   S.coa = await loadKey('coa', null);
-  if(!S.coa){ S.coa = DEFAULT_COA.map(a=>({...a, saldoAwal:0})); await saveKey('coa', S.coa); }
+  let freshCoa = false;
+  if(!S.coa){ S.coa = DEFAULT_COA.map(a=>({...a})); freshCoa = true; }
   S.journal = await loadKey('journal', []);
   S.items = await loadKey('items', []);
   S.sales = await loadKey('sales', []);
   S.purchases = await loadKey('purchases', []);
   S.assets = await loadKey('assets', []);
-  S.customers = await loadKey('customers', []);
+  S.customers = await loadKey('customers', null);
+  if(!S.customers){
+    S.customers = [
+      {id:uid(), kode:'CUST-001', nama:'Flo', alamat1:'', alamat2:'', kota:'', kodepos:'', telp1:'', telp2:'', fax:'', npwp:'', kontak:'', keterangan:'', termHari:0, saldoAwal:0},
+      {id:uid(), kode:'CUST-002', nama:'Hendri', alamat1:'', alamat2:'', kota:'', kodepos:'', telp1:'', telp2:'', fax:'', npwp:'', kontak:'', keterangan:'', termHari:0, saldoAwal:0},
+    ];
+    await saveKey('customers', S.customers);
+  }
   S.vendors = await loadKey('vendors', []);
   S.returs = await loadKey('returs', []);
   S.dpReceived = await loadKey('dp-received', []);
   S.dpPaid = await loadKey('dp-paid', []);
-  S.meta = await loadKey('meta', {nama:'Nama Perusahaan Anda', alamat:'', npwp:'', telp:'', tahunBukuMulai:new Date().getFullYear(), mataUang:'IDR', ppnRate:11, prefixInvoice:'INV', prefixPO:'PO'});
+  S.users = await loadKey('users', []);
+  S.activityLog = await loadKey('activity-log', []);
+  S.meta = await loadKey('meta', {nama:'PT Henzu Jaya Sejahtera', alamat:'', npwp:'', telp:'', tahunBukuMulai:new Date().getFullYear(), mataUang:'IDR', ppnRate:11, prefixInvoice:'INV', prefixPO:'PO'});
+  if(freshCoa){
+    const cutoff = S.meta.saldoAwalCutoff || todayISO();
+    for(const a of S.coa){ if(a.saldoAwal){ await postSaldoAwalAkun(a.code, a.name, a.type, a.saldoAwal, cutoff); } }
+    await saveKey('coa', S.coa);
+  }
 }
 async function saveAllKeys(){
   await Promise.all([saveKey('coa',S.coa),saveKey('journal',S.journal),saveKey('items',S.items),saveKey('sales',S.sales),
     saveKey('purchases',S.purchases),saveKey('assets',S.assets),saveKey('customers',S.customers),saveKey('vendors',S.vendors),
-    saveKey('returs',S.returs),saveKey('dp-received',S.dpReceived),saveKey('dp-paid',S.dpPaid),saveKey('meta',S.meta)]);
+    saveKey('returs',S.returs),saveKey('dp-received',S.dpReceived),saveKey('dp-paid',S.dpPaid),saveKey('users',S.users),saveKey('activity-log',S.activityLog),saveKey('meta',S.meta)]);
 }
 
 /* ============================= UTIL ============================= */
@@ -435,6 +523,23 @@ async function stockReverseOut(itemId, qty, value){
 function nextPeriod(p){ let [y,m]=p.split('-').map(Number); m+=1; if(m>12){m=1;y+=1;} return y+'-'+String(m).padStart(2,'0'); }
 function periodsCount(start,end){ const [sy,sm]=start.split('-').map(Number); const [ey,em]=end.split('-').map(Number); return (ey-sy)*12+(em-sm)+1; }
 function agingBucket(days){ if(days<=0) return 'Belum Jatuh Tempo'; if(days<=30) return '1-30 Hari'; if(days<=60) return '31-60 Hari'; if(days<=90) return '61-90 Hari'; return '>90 Hari'; }
+function effDate(sale){ return (sale && sale.tanggalOtorisasi) || (sale && sale.tanggal); }
+function isPeriodClosed(dateStr){ return !!(S.meta.tutupBukuSampai && dateStr && monthKey(dateStr) <= S.meta.tutupBukuSampai); }
+async function logActivity(desc){
+  if(!S.activityLog) S.activityLog=[];
+  S.activityLog.push({id:uid(), username:(currentUser?currentUser.username:'-'), nama:(currentUser?currentUser.nama:'-'), desc, waktu:new Date().toISOString()});
+  if(S.activityLog.length>500) S.activityLog = S.activityLog.slice(-500);
+  await saveKey('activity-log', S.activityLog);
+}
+async function postSaldoAwalAkun(code, name, type, saldoAwal, tanggal){
+  if(!saldoAwal) return;
+  tanggal = tanggal || todayISO();
+  const isDebitNormal = NORMAL_DEBIT[type];
+  const lines = isDebitNormal
+    ? [{akun:code,debit:Math.max(saldoAwal,0),credit:Math.max(-saldoAwal,0)},{akun:'3900',debit:Math.max(-saldoAwal,0),credit:Math.max(saldoAwal,0)}]
+    : [{akun:'3900',debit:Math.max(saldoAwal,0),credit:Math.max(-saldoAwal,0)},{akun:code,debit:Math.max(-saldoAwal,0),credit:Math.max(saldoAwal,0)}];
+  await postJournal({tanggal,keterangan:'Saldo awal akun '+code+' - '+name,sumber:'saldo-awal',refCode:code,lines});
+}
 
 /* ============================= AR / AP HELPERS ============================= */
 function custName(id){ if(!id) return 'Umum'; const c=S.customers.find(x=>x.id===id); return c? c.nama : 'Umum'; }
@@ -490,16 +595,20 @@ function isCollapsed(g){ if(!S.collapsed) S.collapsed={}; return S.collapsed[g]!
 function renderNav(){
   if(!S.collapsed) S.collapsed={};
   const nav = document.getElementById('navlist');
+  const role = currentUser? currentUser.role : 'admin';
   nav.innerHTML = NAV.map(g=>{
+    const visibleItems = g.items.filter(([id])=>tabAllowed(id, role));
+    if(!visibleItems.length) return '';
     const collapsed = isCollapsed(g.group);
     return `
     <div class="navgroup ${collapsed?'collapsed':''}" data-action="toggleGroup" data-id="${esc(g.group)}"><span>${esc(g.group)}</span><span class="chev">▾</span></div>
-    ${collapsed?'':g.items.map(([id,label])=>`<div class="navitem ${S.tab===id?'active':''}" data-action="nav" data-id="${id}"><span class="ic">${NAV_ICONS[id]||'•'}</span>${esc(label)}</div>`).join('')}
-  `;}).join('');
+    ${collapsed?'':visibleItems.map(([id,label])=>`<div class="navitem ${S.tab===id?'active':''}" data-action="nav" data-id="${id}"><span class="ic">${NAV_ICONS[id]||'•'}</span>${esc(label)}</div>`).join('')}
+  `;}).join('') + `<div class="navgroup" style="cursor:default;">Sesi</div><div class="navitem" data-action="logout"><span class="ic">🚪</span>Keluar (${esc(currentUser?currentUser.nama:'')})</div>`;
   document.getElementById('brandName').textContent = S.meta.nama || 'Perusahaan';
   const logoEl = document.getElementById('brandLogo'); if(logoEl && !logoEl.innerHTML) logoEl.innerHTML = LOGO_SVG;
 }
 function render(){
+  if(S.tab!=='dashboard' && currentUser && !tabAllowed(S.tab, currentUser.role)){ S.tab='dashboard'; }
   renderNav(); renderTopbar();
   const c = document.getElementById('content');
   const map = {
@@ -508,14 +617,15 @@ function render(){
     jurnal:renderJurnal, bukubesar:renderBukuBesar, bukubesarpiutang:renderBBPiutang, bukubesarhutang:renderBBHutang,
     neracasaldo:renderNeracaSaldo, neracabulan:()=>renderNeracaPeriode('bulan'), neracaakhir:()=>renderNeracaPeriode('tahun'),
     labarugi:renderLabaRugi, kumulatif:renderKumulatif, rincian:renderRincian, laporanpenjualan:renderLaporanPenjualan,
+    laporanpembelian:renderLaporanPembelian, perbandingan:renderPerbandingan,
     kartupiutang:()=>renderKartuRincian('piutang'), kartuhutang:()=>renderKartuRincian('hutang'),
     pelunasanpiutang:()=>renderPelunasan('piutang'), pelunasanhutang:()=>renderPelunasan('hutang'),
     otorisasi:renderOtorisasi,
     uangmuka:renderUangMuka, retur:renderRetur,
-    data:renderDataCenter,
+    data:renderDataCenter, 'setup-users':renderSetupUsers,
     'setup-perusahaan':renderSetupPerusahaan,'setup-preferensi':renderSetupPreferensi,'setup-akun':renderSetupAkun,
     'setup-pelanggan':renderSetupPelanggan,'setup-pemasok':renderSetupPemasok,'setup-barang':renderSetupBarang,
-    'setup-aset':renderSetupAset,'setup-saldoawal':renderSetupSaldoAwal,
+    'setup-aset':renderSetupAset,'setup-saldoawal':renderSetupSaldoAwal,'setup-tutupbuku':renderSetupTutupBuku,
   };
   c.innerHTML = (map[S.tab]||renderDashboard)();
 }
@@ -526,7 +636,7 @@ function renderDashboard(){
   const piutang=totalPiutang(), hutang=totalHutang(), persediaan=stockValue();
   const thisMonth=monthKey(todayISO());
   const lr = labaRugi(thisMonth+'-01', todayISO());
-  const penjualanBulanIni = S.sales.filter(s=>s.status==='approved' && monthKey(s.tanggal)===thisMonth).reduce((s,x)=>s+x.total,0);
+  const penjualanBulanIni = S.sales.filter(s=>s.status==='approved' && monthKey(effDate(s))===thisMonth).reduce((s,x)=>s+x.total,0);
   const recent = S.journal.slice(-6).reverse();
   return `
   <div class="grid4">
@@ -603,16 +713,16 @@ function renderSetupAkun(){
       <div class="field"><label>Nama Akun</label><input type="text" name="name" required value="${editAcc?esc(editAcc.name):''}"></div>
       <div class="field"><label>Tipe</label><select name="type">${typeOpts}</select></div>
       <div class="field"><label>Kelompok</label><input type="text" name="kelompok" placeholder="mis. Kas & Bank" value="${editAcc?esc(editAcc.kelompok||''):''}"></div>
-      ${editAcc? '' : `<div class="field"><label>Saldo Awal (Debit=+, Kredit=-)</label><input type="number" name="saldoAwal" value="0"></div>`}
+      <div class="field"><label>Saldo Awal (Debit=+, Kredit=-)</label><input type="number" name="saldoAwal" value="${editAcc?(editAcc.saldoAwal||0):0}"></div>
       <div class="field" style="grid-column:1/-1">
         <button class="btn btn-primary" type="submit">${editAcc?'Update Akun':'Tambah Akun'}</button>
         ${editAcc?`<button class="btn btn-sm" type="button" data-action="cancelEdit" data-id="akun">Batal</button>`:''}
       </div>
     </form>
-    ${editAcc?`<div class="hint">Kode akun dan saldo awal tidak dapat diubah di sini (menjaga histori jurnal). Untuk koreksi saldo, gunakan Jurnal Transaksi.</div>`:''}
+    ${editAcc?`<div class="hint">Kode akun tidak dapat diubah di sini (menjaga histori jurnal). Mengubah Saldo Awal akan mengganti jurnal pembuka akun ini secara otomatis.</div>`:''}
   </div>
   <div class="card">
-    <div class="cardhead"><h2>Daftar Akun (${S.coa.length})</h2>${toolbarHtml('setup-akun',{allowImport:true})}</div>
+    <div class="cardhead"><h2>Daftar Akun (${S.coa.length})</h2>${toolbarHtml('setup-akun',{allowImport:true, importKind:'coa'})}</div>
     <table><thead><tr><th>Kode</th><th>Nama Akun</th><th>Tipe</th><th>Kelompok</th><th class="num">Total Debit</th><th class="num">Total Kredit</th><th class="num">Saldo</th><th></th></tr></thead>
     <tbody>${rows}</tbody></table>
   </div>`;
@@ -653,7 +763,7 @@ function renderSetupPelanggan(){
       </div>
     </form>
   </div>
-  <div class="card"><div class="cardhead"><h2>Daftar Pelanggan (${S.customers.length})</h2>${toolbarHtml('setup-pelanggan',{allowImport:true})}</div>
+  <div class="card"><div class="cardhead"><h2>Daftar Pelanggan (${S.customers.length})</h2>${toolbarHtml('setup-pelanggan',{allowImport:true, importKind:'customers'})}</div>
     ${rows? `<table><thead><tr><th>Kode</th><th>Nama</th><th>Kota</th><th>Telepon</th><th>NPWP</th><th class="num">Termin</th><th class="num">Sisa Piutang</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:`<div class="empty">Belum ada pelanggan.</div>`}
   </div>`;
 }
@@ -691,7 +801,7 @@ function renderSetupPemasok(){
       </div>
     </form>
   </div>
-  <div class="card"><div class="cardhead"><h2>Daftar Pemasok (${S.vendors.length})</h2>${toolbarHtml('setup-pemasok',{allowImport:true})}</div>
+  <div class="card"><div class="cardhead"><h2>Daftar Pemasok (${S.vendors.length})</h2>${toolbarHtml('setup-pemasok',{allowImport:true, importKind:'vendors'})}</div>
     ${rows? `<table><thead><tr><th>Kode</th><th>Nama</th><th>Kota</th><th>Telepon</th><th>NPWP</th><th class="num">Termin</th><th class="num">Sisa Hutang</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:`<div class="empty">Belum ada pemasok.</div>`}
   </div>`;
 }
@@ -722,7 +832,7 @@ function renderSetupBarang(){
     </form>
     ${editI?`<div class="hint">Stok tidak diubah di sini — gunakan menu Stock / Persediaan (opname) untuk menyesuaikan jumlah fisik.</div>`:''}
   </div>
-  <div class="card"><div class="cardhead"><h2>Daftar Barang (${S.items.length}) — Total Nilai: ${fmtRp(stockValue())}</h2>${toolbarHtml('setup-barang',{allowImport:true})}</div>
+  <div class="card"><div class="cardhead"><h2>Daftar Barang (${S.items.length}) — Total Nilai: ${fmtRp(stockValue())}</h2>${toolbarHtml('setup-barang',{allowImport:true, importKind:'items'})}</div>
     ${rows? `<table><thead><tr><th>Kode</th><th>Nama</th><th>Satuan</th><th>Akun Penjualan</th><th class="num">Stok</th><th class="num">HPP Rata²</th><th class="num">Harga Jual</th><th class="num">Nilai</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:`<div class="empty">Belum ada barang.</div>`}
   </div>`;
 }
@@ -762,33 +872,96 @@ function renderSetupAset(){
 
 /* ============================= SETUP: RINGKASAN SALDO AWAL ============================= */
 function renderSetupSaldoAwal(){
-  const akunRows = S.coa.filter(a=>a.saldoAwal).map(a=>`<tr><td>${esc(a.code)} — ${esc(a.name)}</td><td class="num">${fmtRp(a.saldoAwal)}</td></tr>`).join('');
+  const akunRows = S.coa.map(a=>`<tr><td>${esc(a.code)}</td><td>${esc(a.name)}</td><td class="num">${fmtRp(a.saldoAwal||0)}</td></tr>`).join('');
   const custRows = S.customers.filter(c=>c.saldoAwal).map(c=>`<tr><td>${esc(c.nama)}</td><td class="num">${fmtRp(c.saldoAwal)}</td></tr>`).join('');
   const vendRows = S.vendors.filter(v=>v.saldoAwal).map(v=>`<tr><td>${esc(v.nama)}</td><td class="num">${fmtRp(v.saldoAwal)}</td></tr>`).join('');
   const itemRows = S.items.filter(i=>i.stok>0).map(i=>`<tr><td>${esc(i.nama)}</td><td class="num">${i.stok} ${esc(i.satuan)}</td><td class="num">${fmtRp(i.hpp)}</td><td class="num">${fmtRp(i.stok*i.hpp)}</td></tr>`).join('');
   return `
-  <div class="note">Ringkasan seluruh saldo awal yang sudah dimasukkan lewat Setup Akun / Pelanggan / Pemasok / Barang. Untuk mengubah, edit lewat masing-masing menu Setup terkait.</div>
+  <div class="note">Ringkasan seluruh saldo awal. Saldo awal akun bisa diimpor massal di sini (format kolom: <b>kode, saldoAwal</b>) — cocok untuk migrasi dari sistem lama per tanggal cut off tertentu. Akun yang kodenya cocok akan diperbarui saldonya; akun yang tidak ditemukan di file akan dilewati.</div>
+  <div class="card">
+    <div class="cardhead"><h2>Import Saldo Awal Akun (Cut Off)</h2></div>
+    <div class="grid2">
+      <div class="field"><label>Tanggal Cut Off (tanggal jurnal saldo awal akan diposting)</label><input type="date" id="saldoawal-cutoff" value="${S.meta.saldoAwalCutoff||todayISO()}"></div>
+      <div class="field"><label style="display:flex;align-items:center;gap:6px;margin-top:22px;"><input type="checkbox" id="saldoawal-hapus-lain" style="width:auto;"> Hapus akun yang TIDAK ada di file yang diimpor (akun yang sudah punya transaksi tidak akan dihapus)</label></div>
+    </div>
+    <div class="toolbar">
+      <button type="button" class="btn btn-sm btn-imp" data-action="importCsv" data-id="saldoawal">Impor Excel/CSV (kode, saldoAwal)</button>
+      <button type="button" class="btn btn-sm btn-xls" data-action="exportExcel" data-id="setup-saldoawal">Ekspor Excel</button>
+      <button type="button" class="btn btn-sm btn-pdf" data-action="exportPdf" data-id="setup-saldoawal">Unduh PDF</button>
+    </div>
+  </div>
   <div class="grid2">
-    <div class="card"><div class="cardhead"><h2>Saldo Awal Akun (Neraca)</h2></div>${akunRows?`<table><tbody>${akunRows}</tbody></table>`:`<div class="empty">Belum ada saldo awal akun.</div>`}</div>
+    <div class="card"><div class="cardhead"><h2>Saldo Awal Akun (Neraca)</h2></div><table><thead><tr><th>Kode</th><th>Nama</th><th class="num">Saldo Awal</th></tr></thead><tbody>${akunRows}</tbody></table></div>
     <div class="card"><div class="cardhead"><h2>Saldo Awal Persediaan</h2></div>${itemRows?`<table><thead><tr><th>Barang</th><th class="num">Qty</th><th class="num">HPP</th><th class="num">Nilai</th></tr></thead><tbody>${itemRows}</tbody></table>`:`<div class="empty">Belum ada saldo awal persediaan.</div>`}</div>
     <div class="card"><div class="cardhead"><h2>Saldo Awal Piutang per Pelanggan</h2></div>${custRows?`<table><tbody>${custRows}</tbody></table>`:`<div class="empty">Belum ada saldo awal piutang.</div>`}</div>
     <div class="card"><div class="cardhead"><h2>Saldo Awal Hutang per Pemasok</h2></div>${vendRows?`<table><tbody>${vendRows}</tbody></table>`:`<div class="empty">Belum ada saldo awal hutang.</div>`}</div>
   </div>`;
 }
 
+/* ============================= SETUP: TUTUP BUKU ============================= */
+function renderSetupTutupBuku(){
+  const closedThrough = S.meta.tutupBukuSampai || null;
+  const nextPeriodToClose = closedThrough ? nextPeriod(closedThrough) : (()=>{
+    const dates = [...S.journal.map(e=>e.tanggal)].filter(Boolean).sort();
+    return dates.length ? monthKey(dates[0]) : monthKey(todayISO());
+  })();
+  const todayPeriod = monthKey(todayISO());
+  const canClose = nextPeriodToClose <= todayPeriod;
+  const start = nextPeriodToClose+'-01';
+  const endDate = new Date(Number(nextPeriodToClose.slice(0,4)), Number(nextPeriodToClose.slice(5,7)), 0).toISOString().slice(0,10);
+  const end = endDate < todayISO() ? endDate : todayISO();
+  const lr = labaRugi(start, end);
+  const penjualanBulan = S.sales.filter(s=>s.status==='approved' && monthKey(effDate(s))===nextPeriodToClose).length;
+  const pembelianBulan = S.purchases.filter(p=>monthKey(p.tanggal)===nextPeriodToClose).length;
+  const kasMasuk = S.journal.filter(e=>monthKey(e.tanggal)===nextPeriodToClose).reduce((s,e)=>s+e.lines.filter(l=>l.akun==='1000'||l.akun==='1010').reduce((s2,l)=>s2+(l.debit||0),0),0);
+  const kasKeluar = S.journal.filter(e=>monthKey(e.tanggal)===nextPeriodToClose).reduce((s,e)=>s+e.lines.filter(l=>l.akun==='1000'||l.akun==='1010').reduce((s2,l)=>s2+(l.credit||0),0),0);
+  return `
+  <div class="note">Tutup Buku mengunci semua transaksi pada bulan yang dipilih — setelah ditutup, tidak ada transaksi baru (penjualan, pembelian, kas/bank, jurnal, dll) yang bisa diposting dengan tanggal di bulan tersebut atau sebelumnya. Pastikan seluruh transaksi bulan itu sudah benar sebelum menutup.</div>
+  <div class="card"><div class="cardhead"><h2>Status Tutup Buku</h2></div>
+    <div class="grid2">
+      <div class="stat"><div class="lbl">Sudah Ditutup Sampai</div><div class="val">${closedThrough? MONTH_NAMES[Number(closedThrough.slice(5,7))-1]+' '+closedThrough.slice(0,4) : 'Belum pernah tutup buku'}</div></div>
+      <div class="stat"><div class="lbl">Periode Berjalan (Terbuka)</div><div class="val">${MONTH_NAMES[Number(todayPeriod.slice(5,7))-1]} ${todayPeriod.slice(0,4)}</div></div>
+    </div>
+  </div>
+  <div class="card"><div class="cardhead"><h2>Rekap Periode ${MONTH_NAMES[Number(nextPeriodToClose.slice(5,7))-1]} ${nextPeriodToClose.slice(0,4)} (akan ditutup)</h2></div>
+    <div class="grid4">
+      <div class="stat"><div class="lbl">Transaksi Penjualan (Disetujui)</div><div class="val">${penjualanBulan}</div></div>
+      <div class="stat"><div class="lbl">Transaksi Pembelian</div><div class="val">${pembelianBulan}</div></div>
+      <div class="stat"><div class="lbl">Kas/Bank Masuk</div><div class="val pos">${fmtRp(kasMasuk)}</div></div>
+      <div class="stat"><div class="lbl">Kas/Bank Keluar</div><div class="val neg">${fmtRp(kasKeluar)}</div></div>
+    </div>
+    <table><tbody>
+      <tr><td>Pendapatan</td><td class="num">${fmtRp(lr.pendapatan)}</td></tr>
+      <tr><td>Harga Pokok Penjualan</td><td class="num">${fmtRp(lr.hpp)}</td></tr>
+      <tr><td>Laba Kotor</td><td class="num">${fmtRp(lr.labaKotor)}</td></tr>
+      <tr><td>Beban Operasional</td><td class="num">${fmtRp(lr.beban)}</td></tr>
+      <tr class="totalrow"><td>Laba/Rugi Bersih Bulan Ini</td><td class="num">${fmtRp(lr.labaBersih)}</td></tr>
+    </tbody></table>
+    <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-primary" data-action="tutupBuku" data-id="${nextPeriodToClose}" ${canClose?'':'disabled'}>🔒 Tutup Buku ${MONTH_NAMES[Number(nextPeriodToClose.slice(5,7))-1]} ${nextPeriodToClose.slice(0,4)}</button>
+      ${!canClose?'<span class="hint">Belum bisa ditutup — periode ini belum berjalan/berakhir.</span>':''}
+      ${closedThrough?`<button class="btn btn-sm btn-danger" data-action="bukaTutupBuku" data-id="${closedThrough}">♻️ Buka Kembali ${MONTH_NAMES[Number(closedThrough.slice(5,7))-1]} ${closedThrough.slice(0,4)}</button>`:''}
+    </div>
+  </div>`;
+}
+
 /* ============================= PENCATATAN: PEMBELIAN ============================= */
 function renderPembelian(){
-  if(!S.draft.purchaseItems) S.draft.purchaseItems=[{itemId:'',qty:1,harga:0,noBatch:'',tglEd:''}];
+  if(!S.draft.purchaseItems) S.draft.purchaseItems=[{itemId:'',qty:1,harga:0,diskon:0,noBatch:'',tglEd:''}];
   const itemOptions = id=>S.items.map(it=>`<option value="${it.id}" ${id===it.id?'selected':''}>${it.kode} — ${it.nama}</option>`).join('');
-  const linesHtml = S.draft.purchaseItems.map((l,i)=>`<tr>
+  const linesHtml = S.draft.purchaseItems.map((l,i)=>{
+    const nominal = Math.round((l.qty||0)*(l.harga||0)*(1-(l.diskon||0)/100));
+    return `<tr>
     <td><select data-pi="itemId" data-i="${i}"><option value="">Pilih barang…</option>${itemOptions(l.itemId)}</select></td>
     <td><input type="text" data-pi="noBatch" data-i="${i}" value="${esc(l.noBatch||'')}" placeholder="No.Batch" style="width:90px"></td>
     <td><input type="date" data-pi="tglEd" data-i="${i}" value="${l.tglEd||''}" style="width:130px"></td>
-    <td><input type="number" data-pi="qty" data-i="${i}" value="${l.qty}" style="width:65px"></td>
-    <td><input type="number" data-pi="harga" data-i="${i}" value="${l.harga}" style="width:100px"></td>
-    <td class="num">${fmtRp((l.qty||0)*(l.harga||0))}</td>
-    <td><span class="linklike" data-action="removePurchaseLine" data-id="${i}">Hapus</span></td></tr>`).join('');
-  const subtotal = S.draft.purchaseItems.reduce((s,l)=>s+(l.qty||0)*(l.harga||0),0);
+    <td><input type="number" data-pi="qty" data-i="${i}" value="${l.qty}" style="width:55px"></td>
+    <td><input type="number" data-pi="harga" data-i="${i}" value="${l.harga}" style="width:95px"></td>
+    <td><input type="number" data-pi="diskon" data-i="${i}" value="${l.diskon||0}" style="width:55px"></td>
+    <td class="num">${fmtRp(nominal)}</td>
+    <td><span class="linklike" data-action="removePurchaseLine" data-id="${i}">Hapus</span></td></tr>`;
+  }).join('');
+  const subtotal = S.draft.purchaseItems.reduce((s,l)=>s+Math.round((l.qty||0)*(l.harga||0)*(1-(l.diskon||0)/100)),0);
   const ppn = Math.round(subtotal*ppnRate());
   const vendorOptions = S.vendors.map(v=>`<option value="${v.id}">${esc(v.kode)} — ${esc(v.nama)}</option>`).join('');
   const rows = S.purchases.slice().reverse().map(p=>{
@@ -806,12 +979,12 @@ function renderPembelian(){
         <div class="field"><label>Metode Bayar</label><select name="metode"><option value="Tunai">Tunai (Kas)</option><option value="Transfer">Transfer (Bank)</option><option value="Hutang">Hutang</option></select></div>
         <div class="field"><label>No. Faktur</label><input type="text" name="noFaktur" placeholder="Auto jika kosong"></div>
       </div>
-      <table class="lines-table"><thead><tr><th>Barang</th><th>No.Batch</th><th>Tgl ED</th><th>Qty</th><th>Harga Beli</th><th class="num">Subtotal</th><th></th></tr></thead>
+      <table class="lines-table"><thead><tr><th>Barang</th><th>No.Batch</th><th>Tgl ED</th><th>Qty</th><th>Harga Beli</th><th>Diskon %</th><th class="num">Nominal</th><th></th></tr></thead>
       <tbody>${linesHtml}</tbody>
       <tfoot>
-        <tr><td colspan="5" style="text-align:right">Subtotal (DPP)</td><td class="num">${fmtRp(subtotal)}</td><td></td></tr>
-        <tr><td colspan="5" style="text-align:right">PPN Masukan (${S.meta.ppnRate||11}%)</td><td class="num">${fmtRp(ppn)}</td><td></td></tr>
-        <tr class="totalrow"><td colspan="5" style="text-align:right">Total</td><td class="num">${fmtRp(subtotal+ppn)}</td><td></td></tr>
+        <tr><td colspan="6" style="text-align:right">Subtotal (DPP)</td><td class="num">${fmtRp(subtotal)}</td><td></td></tr>
+        <tr><td colspan="6" style="text-align:right">PPN Masukan (${S.meta.ppnRate||11}%)</td><td class="num">${fmtRp(ppn)}</td><td></td></tr>
+        <tr class="totalrow"><td colspan="6" style="text-align:right">Total</td><td class="num">${fmtRp(subtotal+ppn)}</td><td></td></tr>
       </tfoot></table>
       <div style="margin:10px 0;"><button type="button" class="btn btn-sm" data-action="addPurchaseLine">+ Tambah Barang</button></div>
       <button class="btn btn-primary" type="submit">Posting Pembelian</button>
@@ -843,11 +1016,11 @@ function renderPenjualan(){
   const customerOptions = S.customers.map(c=>`<option value="${c.id}">${esc(c.kode)} — ${esc(c.nama)}</option>`).join('');
   const rows = S.sales.slice().reverse().map(s=>{
     const statusBadge = s.status==='approved' ? '<span class="badge badge-ok">Disetujui</span>' : s.status==='rejected' ? '<span class="badge badge-bad">Ditolak</span>' : '<span class="badge badge-warn">Pending Otorisasi</span>';
-    const cetakBtn = s.status==='approved' ? `<span class="linklike" data-action="printInvoice" data-id="${s.id}">Cetak Invoice</span>` : '';
-    return `<tr><td>${fmtDate(s.tanggal)}</td><td>${esc(s.noFaktur)}</td><td>${esc(s.customerNama)}</td><td>${esc(s.metode)}</td><td class="num">${fmtRp(s.subtotal)}</td><td class="num">${fmtRp(s.ppn)}</td><td class="num">${fmtRp(s.total)}</td><td>${statusBadge}</td><td>${cetakBtn}</td></tr>`;
+    const cetakBtn = s.status!=='rejected' ? `<span class="linklike" data-action="printInvoiceDirect" data-id="${s.id}">Cetak</span> · <span class="linklike" data-action="printInvoice" data-id="${s.id}">PDF</span>` : '-';
+    return `<tr><td>${fmtDate(s.tanggal)}</td><td>${s.tanggalOtorisasi?fmtDate(s.tanggalOtorisasi):'-'}</td><td>${esc(s.noFaktur)}</td><td>${esc(s.customerNama)}</td><td>${esc(s.metode)}</td><td class="num">${fmtRp(s.subtotal)}</td><td class="num">${fmtRp(s.ppn)}</td><td class="num">${fmtRp(s.total)}</td><td>${statusBadge}</td><td>${cetakBtn}</td></tr>`;
   }).join('');
   return `
-  <div class="note">Setiap transaksi penjualan yang diposting berstatus <b>Pending</b> dan belum diakui di laporan keuangan (jurnal belum terbentuk, stok belum berkurang) sampai disetujui lewat menu <b>Otorisasi Penjualan</b>. No.Batch &amp; Tgl ED bersifat catatan untuk keperluan invoice/traceability (belum memengaruhi perhitungan HPP per-batch). Impor massal (Excel/CSV) menerima kolom: <b>NoFaktur, Tanggal, KodeKonsumen, Metode, KodeBarang, Qty, Harga, Diskon%</b>.</div>
+  <div class="note">Setiap transaksi penjualan yang diposting berstatus <b>Pending</b> dan belum diakui di laporan keuangan (jurnal belum terbentuk, stok belum berkurang) sampai disetujui lewat menu <b>Otorisasi Penjualan</b>. <b>Tanggal pengakuan penjualan (masuk laporan keuangan &amp; menentukan bulan pelaporan) adalah tanggal saat diotorisasi, bukan tanggal input ini.</b> No.Batch &amp; Tgl ED bersifat catatan untuk keperluan invoice/traceability (belum memengaruhi perhitungan HPP per-batch). Impor massal (Excel/CSV) menerima kolom: <b>NoFaktur, Tanggal, KodeKonsumen, Metode, KodeBarang, Qty, Harga, Diskon%</b>.</div>
   <div class="card">
     <div class="cardhead"><h2>Input Penjualan</h2></div>
     <form id="form-penjualan">
@@ -869,7 +1042,7 @@ function renderPenjualan(){
     </form>
   </div>
   <div class="card"><div class="cardhead"><h2>Riwayat Penjualan (${S.sales.length})</h2>${toolbarHtml('penjualan',{allowImport:true})}</div>
-    ${rows?`<table><thead><tr><th>Tanggal</th><th>No. Faktur</th><th>Konsumen</th><th>Metode</th><th class="num">DPP</th><th class="num">PPN</th><th class="num">Grand Total</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:`<div class="empty">Belum ada transaksi penjualan.</div>`}
+    ${rows?`<table><thead><tr><th>Tgl Input</th><th>Tgl Otorisasi</th><th>No. Faktur</th><th>Konsumen</th><th>Metode</th><th class="num">DPP</th><th class="num">PPN</th><th class="num">Grand Total</th><th>Status</th><th>Invoice</th></tr></thead><tbody>${rows}</tbody></table>`:`<div class="empty">Belum ada transaksi penjualan.</div>`}
   </div>`;
 }
 
@@ -1006,7 +1179,7 @@ function renderBiaya(){
       <div class="field"><label>Tanggal</label><input type="date" name="tanggal" value="${todayISO()}" required></div>
       <div class="field" style="flex:2"><label>Akun Beban</label><select name="akunBeban">${bebanOptions}</select></div>
       <div class="field"><label>Jumlah</label><input type="number" name="jumlah" required></div>
-      <div class="field"><label>Metode Bayar</label><select name="metode"><option value="1000">Tunai (Kas)</option><option value="1010">Transfer (Bank)</option><option value="2103">Hutang Biaya</option></select></div>
+      <div class="field"><label>Metode Bayar</label><select name="metode"><option value="1000">Tunai (Kas)</option><option value="1010">Transfer (Bank)</option><option value="2000">Hutang</option></select></div>
       <div class="field" style="grid-column:1/-1"><label>Keterangan</label><input type="text" name="keterangan" required placeholder="mis. Bayar listrik bulan September"></div>
       <div class="field" style="grid-column:1/-1"><button class="btn btn-primary" type="submit">Posting Biaya</button></div>
     </form>
@@ -1193,7 +1366,7 @@ function renderBBPiutang(){
   if(sel){
     const c = S.customers.find(x=>x.id===sel);
     const mutasi = [];
-    S.sales.filter(s=>s.customerId===sel && s.status==='approved').forEach(s=> mutasi.push({date:s.tanggal, ket:'Faktur '+s.noFaktur, debit:s.total, credit:0}));
+    S.sales.filter(s=>s.customerId===sel && s.status==='approved').forEach(s=> mutasi.push({date:effDate(s), ket:'Faktur '+s.noFaktur, debit:s.total, credit:0}));
     S.journal.filter(e=>e.sumber==='pembayaran-piutang' && e.customerId===sel).forEach(e=>{
       const cr = e.lines.find(l=>l.credit>0);
       mutasi.push({date:e.tanggal, ket:e.keterangan, debit:0, credit:cr?cr.credit:0});
@@ -1402,11 +1575,12 @@ function renderKartuRincian(mode){
     const open = docs.filter(d=> (isPiutang? d.customerId : d.vendorId)===p.id && (d.total-d.dibayar)>0.5);
     if(!open.length) return '';
     const rows = open.map(d=>{
-      const jt = addDays(d.tanggal, p.termHari||0);
+      const docDate = isPiutang? effDate(d) : d.tanggal;
+      const jt = addDays(docDate, p.termHari||0);
       const overdue = Math.round((new Date(today)-new Date(jt))/86400000);
       const bucket = agingBucket(overdue);
       bucketTotals[bucket] += (d.total-d.dibayar);
-      return `<tr><td>${esc(d.noFaktur)}</td><td>${fmtDate(d.tanggal)}</td><td>${fmtDate(jt)}</td><td class="num">${fmtRp(d.total)}</td><td class="num">${fmtRp(d.dibayar)}</td><td class="num">${fmtRp(d.total-d.dibayar)}</td><td><span class="badge ${bucket==='Belum Jatuh Tempo'?'badge-muted':bucket==='1-30 Hari'?'badge-warn':'badge-bad'}">${bucket}</span></td></tr>`;
+      return `<tr><td>${esc(d.noFaktur)}</td><td>${fmtDate(docDate)}</td><td>${fmtDate(jt)}</td><td class="num">${fmtRp(d.total)}</td><td class="num">${fmtRp(d.dibayar)}</td><td class="num">${fmtRp(d.total-d.dibayar)}</td><td><span class="badge ${bucket==='Belum Jatuh Tempo'?'badge-muted':bucket==='1-30 Hari'?'badge-warn':'badge-bad'}">${bucket}</span></td></tr>`;
     }).join('');
     const subtotal = open.reduce((s,d)=>s+(d.total-d.dibayar),0);
     return `<div class="card"><div class="cardhead"><h2>${esc(p.kode)} — ${esc(p.nama)}</h2><span class="hint">Sisa: ${fmtRp(subtotal)}</span></div>
@@ -1454,10 +1628,11 @@ function renderLaporanPenjualan(){
   const custFilter = S.draft.lpCustomer||'';
   const rows = [];
   S.sales.filter(s=>s.status==='approved').forEach(s=>{
-    if(start && s.tanggal<start) return; if(end && s.tanggal>end) return;
+    const tgl = effDate(s);
+    if(start && tgl<start) return; if(end && tgl>end) return;
     if(custFilter && s.customerId!==custFilter) return;
     (s.items||[]).forEach(it=>{
-      rows.push({tanggal:s.tanggal, noFaktur:s.noFaktur, konsumen:s.customerNama, barang:it.itemNama, qty:it.qty, harga:it.harga, diskon:it.diskon||0, nominal:it.nominal, grandTotal:s.total});
+      rows.push({tanggal:tgl, noFaktur:s.noFaktur, konsumen:s.customerNama, barang:it.itemNama, qty:it.qty, harga:it.harga, diskon:it.diskon||0, nominal:it.nominal, grandTotal:s.total});
     });
   });
   const totalNominal = rows.reduce((s,r)=>s+r.nominal,0);
@@ -1479,86 +1654,105 @@ function renderLaporanPenjualan(){
 
 /* ============================= PENCATATAN: OTORISASI PENJUALAN ============================= */
 function renderOtorisasi(){
+  const isSuperadmin = currentUser && currentUser.role==='superadmin';
   const pending = S.sales.filter(s=>s.status==='pending' || !s.status).slice().reverse();
   const history = S.sales.filter(s=>s.status==='approved' || s.status==='rejected').slice().reverse().slice(0,30);
   const pendingRows = pending.map(s=>`<tr><td>${fmtDate(s.tanggal)}</td><td>${esc(s.noFaktur)}</td><td>${esc(s.customerNama)}</td><td>${esc(s.metode)}</td><td class="num">${fmtRp(s.total)}</td>
-    <td><button class="btn btn-sm btn-primary" data-action="approveSale" data-id="${s.id}">Otorisasi</button> <button class="btn btn-sm btn-danger" data-action="rejectSale" data-id="${s.id}">Tolak</button></td></tr>`).join('');
-  const historyRows = history.map(s=>`<tr><td>${fmtDate(s.tanggal)}</td><td>${esc(s.noFaktur)}</td><td>${esc(s.customerNama)}</td><td class="num">${fmtRp(s.total)}</td><td>${s.status==='approved'?'<span class="badge badge-ok">Disetujui</span>':'<span class="badge badge-bad">Ditolak</span>'}</td><td>${esc(s.approvedBy||'-')}</td><td>${s.approvedAt?new Date(s.approvedAt).toLocaleString('id-ID'):'-'}</td></tr>`).join('');
+    <td>${isSuperadmin? `<button class="btn btn-sm btn-primary" data-action="approveSale" data-id="${s.id}">Otorisasi</button> <button class="btn btn-sm btn-danger" data-action="rejectSale" data-id="${s.id}">Tolak</button>` : `<span class="hint">Menunggu Super Admin</span>`}</td>
+    <td><span class="linklike" data-action="printInvoiceDirect" data-id="${s.id}">Cetak Draft</span> · <span class="linklike" data-action="printInvoice" data-id="${s.id}">PDF</span></td></tr>`).join('');
+  const historyRows = history.map(s=>{
+    const invoiceLinks = s.status==='approved' ? `<span class="linklike" data-action="printInvoiceDirect" data-id="${s.id}">Cetak</span> · <span class="linklike" data-action="printInvoice" data-id="${s.id}">PDF</span>` : '-';
+    return `<tr><td>${fmtDate(s.tanggal)}</td><td>${esc(s.noFaktur)}</td><td>${esc(s.customerNama)}</td><td class="num">${fmtRp(s.total)}</td><td>${s.status==='approved'?'<span class="badge badge-ok">Disetujui</span>':'<span class="badge badge-bad">Ditolak</span>'}</td><td>${esc(s.approvedBy||'-')}</td><td>${s.approvedAt?new Date(s.approvedAt).toLocaleString('id-ID'):'-'}</td><td>${invoiceLinks}</td></tr>`;
+  }).join('');
   return `
-  <div class="note">Transaksi penjualan baru diakui sebagai penjualan resmi (masuk jurnal, mengurangi stok, dan tampil di seluruh laporan) setelah diotorisasi di sini. Menolak transaksi akan membatalkannya secara permanen.</div>
+  <div class="note">Transaksi penjualan baru diakui sebagai penjualan resmi (masuk jurnal, mengurangi stok, dan tampil di seluruh laporan) setelah diotorisasi di sini. Menolak transaksi akan membatalkannya secara permanen. ${isSuperadmin?'':'<b>Hanya Super Admin yang dapat melakukan otorisasi/penolakan.</b>'}</div>
   <div class="card"><div class="cardhead"><h2>Menunggu Otorisasi (${pending.length})</h2>${toolbarHtml('otorisasi')}</div>
-    ${pendingRows? `<table><thead><tr><th>Tanggal</th><th>No.Faktur</th><th>Konsumen</th><th>Metode</th><th class="num">Grand Total</th><th>Aksi</th></tr></thead><tbody>${pendingRows}</tbody></table>` : `<div class="empty">Tidak ada transaksi penjualan yang menunggu otorisasi.</div>`}
+    ${pendingRows? `<table><thead><tr><th>Tanggal</th><th>No.Faktur</th><th>Konsumen</th><th>Metode</th><th class="num">Grand Total</th><th>Aksi</th><th>Invoice</th></tr></thead><tbody>${pendingRows}</tbody></table>` : `<div class="empty">Tidak ada transaksi penjualan yang menunggu otorisasi.</div>`}
   </div>
   <div class="card"><div class="cardhead"><h2>Riwayat Otorisasi</h2></div>
-    ${historyRows? `<table><thead><tr><th>Tanggal</th><th>No.Faktur</th><th>Konsumen</th><th class="num">Grand Total</th><th>Status</th><th>Oleh</th><th>Waktu</th></tr></thead><tbody>${historyRows}</tbody></table>` : `<div class="empty">Belum ada riwayat.</div>`}
+    ${historyRows? `<table><thead><tr><th>Tanggal</th><th>No.Faktur</th><th>Konsumen</th><th class="num">Grand Total</th><th>Status</th><th>Oleh</th><th>Waktu</th><th>Invoice</th></tr></thead><tbody>${historyRows}</tbody></table>` : `<div class="empty">Belum ada riwayat.</div>`}
   </div>`;
 }
 
 /* ============================= EXPORT: PDF & EXCEL (shared data source) ============================= */
 function toolbarHtml(key, opts={}){
-  const importBtn = opts.allowImport ? `<button type="button" class="btn btn-sm btn-imp" data-action="importCsv" data-id="${key}">Impor Excel/CSV</button>` : '';
+  const importKind = opts.importKind || key;
+  const importBtn = opts.allowImport ? `<button type="button" class="btn btn-sm btn-imp" data-action="importCsv" data-id="${importKind}">Impor Excel/CSV</button>` : '';
   return `<div class="toolbar">${importBtn}<button type="button" class="btn btn-sm btn-xls" data-action="exportExcel" data-id="${key}">Ekspor Excel</button><button type="button" class="btn btn-sm btn-pdf" data-action="exportPdf" data-id="${key}">Unduh PDF</button></div>`;
 }
-function printInvoice(saleId){
+function printInvoice(saleId, mode){
+  mode = mode || 'download';
   const sale = S.sales.find(s=>s.id===saleId);
   if(!sale){ alert('Transaksi tidak ditemukan.'); return; }
-  if(sale.status!=='approved'){ alert('Invoice hanya bisa dicetak untuk transaksi yang sudah diotorisasi.'); return; }
+  if(sale.status==='rejected'){ alert('Transaksi ini sudah ditolak dan tidak berlaku, invoice tidak bisa dicetak.'); return; }
+  const isDraft = sale.status!=='approved';
   try{
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({orientation:'portrait', unit:'pt', format:'a4'});
     const pageW = doc.internal.pageSize.getWidth();
-    const margin = 40; let y = 50;
+    const margin = 40; let y = 46;
     const cust = S.customers.find(c=>c.id===sale.customerId);
     const term = cust? (cust.termHari||0) : 0;
-    const jatuhTempo = addDays(sale.tanggal, term);
+    const tglInvoice = effDate(sale);
+    const jatuhTempo = addDays(tglInvoice, term);
 
-    doc.setFont(undefined,'bold'); doc.setFontSize(16);
-    doc.text(S.meta.nama||'Nama Perusahaan', margin, y);
-    doc.setFontSize(16); doc.text('INVOICE', pageW-margin, y, {align:'right'});
-    y += 16;
-    doc.setFont(undefined,'normal'); doc.setFontSize(9);
-    if(S.meta.alamat){ doc.text(S.meta.alamat, margin, y); y+=12; }
-    const kontak = [S.meta.telp?('Telp/Fax: '+S.meta.telp):null].filter(Boolean).join('  ');
-    if(kontak){ doc.text(kontak, margin, y); y+=12; }
-    if(S.meta.npwp){ doc.text('NPWP: '+S.meta.npwp, margin, y); y+=12; }
-    y += 8;
-    doc.setDrawColor(180); doc.line(margin, y, pageW-margin, y); y+=18;
+    // --- Logo bulat sederhana (inisial perusahaan) ---
+    const namaPerusahaan = S.meta.nama || 'Nama Perusahaan';
+    const initials = namaPerusahaan.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    doc.setDrawColor(28,42,82); doc.setLineWidth(1.1);
+    doc.circle(margin+20, y+18, 22, 'S');
+    doc.setFillColor(28,42,82); doc.circle(margin+20, y+18, 18, 'F');
+    doc.setTextColor(255,255,255); doc.setFont(undefined,'bold'); doc.setFontSize(11);
+    doc.text(initials, margin+20, y+22, {align:'center'});
+    doc.setTextColor(0,0,0);
 
+    const textX = margin+52;
+    doc.setFont(undefined,'bold'); doc.setFontSize(15);
+    doc.text(namaPerusahaan.toUpperCase(), textX, y+12);
+    doc.setFontSize(17);
+    doc.text(isDraft?'PROFORMA INVOICE':'INVOICE', pageW-margin, y+14, {align:'right'});
+    y += 28;
+    doc.setFont(undefined,'normal'); doc.setFontSize(8.5);
+    if(S.meta.alamat){ doc.text(S.meta.alamat, textX, y); y+=11; }
+    const kontak = S.meta.telp?('Telp/Fax : '+S.meta.telp):'';
+    if(kontak){ doc.text(kontak, textX, y); }
+    if(S.meta.npwp){ doc.text('NPWP : '+S.meta.npwp, pageW-margin, y, {align:'right'}); }
+    y+=14;
+    doc.setDrawColor(150); doc.setLineWidth(0.7); doc.line(margin, y, pageW-margin, y); y+=16;
+
+    const labelX = pageW/2+10, valueX = pageW/2+75;
     doc.setFontSize(9);
-    doc.text('Kepada Yth:', margin, y);
-    doc.text('No. Faktur', pageW/2, y); doc.text(': '+sale.noFaktur, pageW/2+70, y);
+    doc.text('Kepada Yth :', margin, y);
+    doc.text('No. Faktur', labelX, y); doc.text(': '+sale.noFaktur, valueX, y);
     y+=13;
     doc.setFont(undefined,'bold'); doc.text(sale.customerNama||'Umum', margin, y); doc.setFont(undefined,'normal');
-    doc.text('Tanggal', pageW/2, y); doc.text(': '+fmtDate(sale.tanggal), pageW/2+70, y);
+    doc.text('Tanggal', labelX, y); doc.text(': '+fmtDate(tglInvoice), valueX, y);
     y+=13;
     if(cust && cust.alamat1){ doc.text(cust.alamat1, margin, y); }
-    doc.text('TOP', pageW/2, y); doc.text(': '+term+' Hari', pageW/2+70, y);
+    doc.text('TOP', labelX, y); doc.text(': '+term+' Hari', valueX, y);
     y+=13;
-    doc.text('Jatuh Tempo', pageW/2, y); doc.text(': '+fmtDate(jatuhTempo), pageW/2+70, y);
-    y+=20;
+    doc.text('Jatuh Tempo', labelX, y); doc.text(': '+fmtDate(jatuhTempo), valueX, y);
+    y+=22;
 
-    const colX = [margin, margin+170, margin+230, margin+270, margin+330, margin+390, pageW-margin];
-    const head = ['Nama Barang','No.Batch/ED','Qty','Harga','Disc%','Jumlah'];
-    const body = (sale.items||[]).map(it=>[
-      it.itemNama,
-      (it.noBatch||'-')+(it.tglEd?(' / '+fmtDate(it.tglEd)):''),
-      String(it.qty),
-      fmtRp(it.harga),
-      (it.diskon||0)+'%',
-      fmtRp(it.nominal)
-    ]);
+    const head = ['No','Nama Barang','No.Batch/ED','Qty','Harga','Disc%','Nilai Disc','Jumlah'];
+    const body = (sale.items||[]).map((it,idx)=>{
+      const nilaiDisc = Math.round(it.qty*it.harga*(it.diskon||0)/100);
+      return [String(idx+1), it.itemNama, (it.noBatch||'-')+(it.tglEd?(' / '+fmtDate(it.tglEd)):''), String(it.qty), fmtRp(it.harga), (it.diskon||0)+'%', fmtRp(nilaiDisc), fmtRp(it.nominal)];
+    });
     doc.autoTable({
       startY:y, margin:{left:margin,right:margin},
       head:[head], body,
-      styles:{fontSize:8, cellPadding:4},
+      styles:{fontSize:7.6, cellPadding:3.5},
       headStyles:{fillColor:[21,34,56], textColor:255},
-      columnStyles:{2:{halign:'right'},3:{halign:'right'},4:{halign:'right'},5:{halign:'right'}}
+      columnStyles:{0:{cellWidth:22,halign:'center'},3:{halign:'right',cellWidth:32},4:{halign:'right'},5:{halign:'right',cellWidth:32},6:{halign:'right'},7:{halign:'right'}}
     });
     y = doc.lastAutoTable.finalY + 16;
 
+    if(y > 680){ doc.addPage(); y = 50; }
+
     const boxW = (pageW-2*margin)*0.55;
-    doc.setDrawColor(0); doc.rect(margin, y, boxW, 40);
-    doc.setFontSize(8);
+    doc.setDrawColor(0); doc.setLineWidth(0.8); doc.rect(margin, y, boxW, 40);
+    doc.setFontSize(7.6);
     const terbilangText = terbilang(sale.total);
     const wrapped = doc.splitTextToSize(terbilangText, boxW-10);
     doc.text(wrapped, margin+5, y+13);
@@ -1570,36 +1764,50 @@ function printInvoice(saleId){
     doc.setFont(undefined,'bold');
     doc.text('Total Tagihan', sumX, y+38); doc.text(fmtRp(sale.total), pageW-margin, y+38, {align:'right'});
     doc.setFont(undefined,'normal');
-    y += 60;
+    y += 62;
 
     doc.setFontSize(9);
     doc.text('Penerima', margin, y);
     doc.text('Penanggung Jawab', margin+180, y);
-    y += 40;
+    y += 42;
     doc.text('(  Cap dan Ttd  )', margin, y);
-    y += 20;
+    y += 18;
 
     if(S.meta.coldChain){
       const boxW2 = pageW-2*margin;
-      doc.rect(margin, y, boxW2, 40);
+      doc.setLineWidth(0.8); doc.rect(margin, y, boxW2, 38);
       doc.setFontSize(8);
       doc.text('Serah Terima Produk Rantai Dingin 2 - 8°C', margin+boxW2/2, y+12, {align:'center'});
-      doc.line(margin+boxW2/2, y+16, margin+boxW2/2, y+40);
-      doc.text('Suhu Dikirim', margin+boxW2/4, y+30, {align:'center'});
-      doc.text('Suhu Diterima', margin+boxW2*3/4, y+30, {align:'center'});
-      y += 55;
+      doc.line(margin+boxW2/2, y+16, margin+boxW2/2, y+38);
+      doc.text('Suhu Dikirim', margin+boxW2/4, y+29, {align:'center'});
+      doc.text('Suhu Diterima', margin+boxW2*3/4, y+29, {align:'center'});
+      y += 52;
     }
 
     doc.setFontSize(9);
     if(S.meta.rekBank){ doc.text('Pembayaran: '+S.meta.rekBank, pageW/2, y, {align:'center'}); y+=18; }
     if(S.meta.catatanInvoice){
-      doc.setFont(undefined,'bold');
-      doc.rect(pageW/2-50, y-10, 100, 18);
-      doc.text(S.meta.catatanInvoice, pageW/2, y+3, {align:'center'});
+      doc.setFont(undefined,'bold'); doc.setFontSize(9);
+      const w2 = doc.getTextWidth(S.meta.catatanInvoice)+24;
+      doc.rect(pageW/2-w2/2, y-11, w2, 18);
+      doc.text(S.meta.catatanInvoice, pageW/2, y+2, {align:'center'});
       doc.setFont(undefined,'normal');
     }
 
-    doc.save('Invoice-'+sale.noFaktur.replace(/\//g,'-')+'.pdf');
+    if(isDraft){
+      doc.setTextColor(220,60,60); doc.setFontSize(46); doc.setFont(undefined,'bold');
+      doc.text('DRAFT', pageW/2, 420, {align:'center', angle:35});
+      doc.setTextColor(0,0,0);
+    }
+
+    if(mode==='print'){
+      doc.autoPrint();
+      const blobUrl = doc.output('bloburl');
+      const w = window.open(blobUrl, '_blank');
+      if(!w){ alert('Popup diblokir browser. Izinkan popup untuk situs ini agar bisa cetak langsung, atau gunakan tombol Unduh PDF.'); }
+    } else {
+      doc.save((isDraft?'Draft-':'Invoice-')+sale.noFaktur.replace(/\//g,'-')+'.pdf');
+    }
   }catch(err){ console.error(err); alert('Gagal membuat invoice PDF. Coba lagi.'); }
 }
 function pdfTable(title, head, body, opts={}){
@@ -1704,8 +1912,8 @@ function getExportData(key){
   if(key==='laporanpenjualan'){
     const start=S.draft.lpStart||'', end=S.draft.lpEnd||today, custFilter=S.draft.lpCustomer||'';
     const rows=[];
-    S.sales.filter(s=>s.status==='approved').forEach(s=>{ if(start&&s.tanggal<start) return; if(end&&s.tanggal>end) return; if(custFilter&&s.customerId!==custFilter) return;
-      (s.items||[]).forEach(it=> rows.push([fmtDate(s.tanggal), s.noFaktur, s.customerNama, it.itemNama, it.qty, fmtRp(it.harga), (it.diskon||0)+'%', fmtRp(it.nominal), fmtRp(s.total)]));
+    S.sales.filter(s=>s.status==='approved').forEach(s=>{ const tgl=effDate(s); if(start&&tgl<start) return; if(end&&tgl>end) return; if(custFilter&&s.customerId!==custFilter) return;
+      (s.items||[]).forEach(it=> rows.push([fmtDate(tgl), s.noFaktur, s.customerNama, it.itemNama, it.qty, fmtRp(it.harga), (it.diskon||0)+'%', fmtRp(it.nominal), fmtRp(s.total)]));
     });
     return {title:'Laporan Penjualan', head:['Tanggal','No.Faktur','Konsumen','Barang','Qty','Harga','Diskon','Nominal','Grand Total'], body:rows, opts:{filename:'laporan-penjualan', landscape:true}};
   }
@@ -1715,7 +1923,7 @@ function getExportData(key){
     const body=[];
     parties.forEach(p=>{ const open = docs.filter(d=>(isPiutang?d.customerId:d.vendorId)===p.id && (d.total-d.dibayar)>0.5); if(!open.length) return;
       body.push([p.kode+' - '+p.nama,'','','','']);
-      open.forEach(d=>{ const jt=addDays(d.tanggal,p.termHari||0); body.push(['',d.noFaktur, fmtDate(d.tanggal), fmtDate(jt), fmtRp(d.total-d.dibayar)]); });
+      open.forEach(d=>{ const docDate=isPiutang?effDate(d):d.tanggal; const jt=addDays(docDate,p.termHari||0); body.push(['',d.noFaktur, fmtDate(docDate), fmtDate(jt), fmtRp(d.total-d.dibayar)]); });
     });
     return {title:isPiutang?'Kartu Piutang Rincian':'Kartu Hutang Rincian', head:['Pelanggan/Pemasok','No.Faktur','Tgl Faktur','Tgl JT','Sisa'], body, opts:{filename:key}};
   }
@@ -1730,6 +1938,10 @@ function getExportData(key){
   if(key==='setup-akun'){
     const body = S.coa.map(a=>[a.code,a.name,a.type,a.kelompok||'', fmtRp(saldoAkun(a.code))]);
     return {title:'Daftar Akun', head:['Kode','Nama','Tipe','Kelompok','Saldo'], body, opts:{filename:'daftar-akun'}};
+  }
+  if(key==='setup-saldoawal'){
+    const body = S.coa.map(a=>[a.code,a.name,String(a.saldoAwal||0)]);
+    return {title:'Saldo Awal Akun', head:['kode','nama','saldoAwal'], body, opts:{filename:'saldo-awal-akun'}};
   }
   if(key==='setup-pelanggan'){
     const body = S.customers.map(c=>[c.kode,c.nama,c.kota||'',c.telp1||'',c.npwp||'']);
@@ -1746,6 +1958,14 @@ function getExportData(key){
   if(key==='pembelian'){
     const body = S.purchases.map(p=>[fmtDate(p.tanggal), p.noFaktur, p.vendorNama, p.metode, fmtRp(p.subtotal), fmtRp(p.ppn), fmtRp(p.total), p.dibayar>=p.total-0.5?'Lunas':p.dibayar>0?'Sebagian':'Belum Bayar']);
     return {title:'Riwayat Pembelian', head:['Tanggal','No.Faktur','Pemasok','Metode','DPP','PPN','Total','Status'], body, opts:{filename:'riwayat-pembelian', landscape:true}};
+  }
+  if(key==='laporanpembelian'){
+    const start=S.draft.lpbStart||'', end=S.draft.lpbEnd||today, vendFilter=S.draft.lpbVendor||'';
+    const rows=[];
+    S.purchases.forEach(p=>{ if(start&&p.tanggal<start) return; if(end&&p.tanggal>end) return; if(vendFilter&&p.vendorId!==vendFilter) return;
+      (p.items||[]).forEach(it=> rows.push([fmtDate(p.tanggal), p.noFaktur, p.vendorNama, it.itemNama, it.qty, fmtRp(it.harga), fmtRp(it.nominal!=null?it.nominal:it.qty*it.harga), fmtRp(p.total)]));
+    });
+    return {title:'Laporan Pembelian', head:['Tanggal','No.Faktur','Pemasok','Barang','Qty','Harga','Nominal','Grand Total'], body:rows, opts:{filename:'laporan-pembelian', landscape:true}};
   }
   if(key==='penjualan'){
     const body = S.sales.map(s=>[fmtDate(s.tanggal), s.noFaktur, s.customerNama, s.metode, fmtRp(s.subtotal), fmtRp(s.ppn), fmtRp(s.total), statusLabel(s.status)]);
@@ -1805,8 +2025,173 @@ function renderDataCenter(){
   </div>`;
 }
 
+/* ============================= LAPORAN: LAPORAN PEMBELIAN ============================= */
+function renderLaporanPembelian(){
+  const start = S.draft.lpbStart||'', end = S.draft.lpbEnd||todayISO();
+  const vendFilter = S.draft.lpbVendor||'';
+  const rows=[];
+  S.purchases.forEach(p=>{
+    if(start && p.tanggal<start) return; if(end && p.tanggal>end) return;
+    if(vendFilter && p.vendorId!==vendFilter) return;
+    (p.items||[]).forEach(it=> rows.push({tanggal:p.tanggal, noFaktur:p.noFaktur, pemasok:p.vendorNama, barang:it.itemNama, qty:it.qty, harga:it.harga, nominal:(it.nominal!=null?it.nominal:it.qty*it.harga), grandTotal:p.total}));
+  });
+  const totalNominal = rows.reduce((s,r)=>s+r.nominal,0);
+  return `
+  <div class="card"><div class="cardhead"><h2>Filter</h2></div>
+    <div class="row">
+      <div class="field"><label>Dari</label><input type="date" id="lpb-start" value="${start}"></div>
+      <div class="field"><label>Sampai</label><input type="date" id="lpb-end" value="${end}"></div>
+      <div class="field" style="flex:2"><label>Pemasok</label><select id="lpb-vendor"><option value="">Semua Pemasok</option>${S.vendors.map(v=>`<option value="${v.id}" ${vendFilter===v.id?'selected':''}>${esc(v.nama)}</option>`).join('')}</select></div>
+    </div>
+  </div>
+  <div class="card"><div class="cardhead"><h2>Laporan Pembelian (${rows.length} baris)</h2>${toolbarHtml('laporanpembelian')}</div>
+    ${rows.length? `<table><thead><tr><th>Tanggal</th><th>No.Faktur</th><th>Pemasok</th><th>Barang</th><th class="num">Qty</th><th class="num">Harga</th><th class="num">Nominal</th><th class="num">Grand Total</th></tr></thead><tbody>
+      ${rows.map(r=>`<tr><td>${fmtDate(r.tanggal)}</td><td>${esc(r.noFaktur)}</td><td>${esc(r.pemasok)}</td><td>${esc(r.barang)}</td><td class="num">${r.qty}</td><td class="num">${fmtRp(r.harga)}</td><td class="num">${fmtRp(r.nominal)}</td><td class="num">${fmtRp(r.grandTotal)}</td></tr>`).join('')}
+      <tr class="totalrow"><td colspan="6">Total Nominal</td><td class="num">${fmtRp(totalNominal)}</td><td></td></tr>
+      </tbody></table>`:`<div class="empty">Tidak ada data pembelian pada filter ini.</div>`}
+  </div>`;
+}
+
+/* ============================= LAPORAN: PERBANDINGAN (SUPER ADMIN) ============================= */
+function withJournal(tempJournal, fn){ const orig=S.journal; S.journal=tempJournal; let result; try{ result=fn(); } finally { S.journal=orig; } return result; }
+function simulatePendingEntries(){
+  const pending = S.sales.filter(s=>s.status==='pending'||!s.status);
+  const entries=[];
+  pending.forEach(sale=>{
+    let totalHpp=0; const byAkun={};
+    (sale.items||[]).forEach(it=>{
+      const item = findItem(it.itemId);
+      const estHpp = item? item.hpp*it.qty : 0;
+      totalHpp += estHpp;
+      const akunP = (item&&item.akunPenjualan)||'4000';
+      byAkun[akunP] = (byAkun[akunP]||0)+it.nominal;
+    });
+    const akunKasLawan = sale.metode==='Tunai'?'1000':sale.metode==='Transfer'?'1010':'1100';
+    const lines=[{akun:akunKasLawan,debit:sale.total,credit:0}];
+    Object.entries(byAkun).forEach(([akun,val])=>lines.push({akun,debit:0,credit:val}));
+    lines.push({akun:'2100',debit:0,credit:sale.ppn});
+    lines.push({akun:'5000',debit:totalHpp,credit:0});
+    lines.push({akun:'1200',debit:0,credit:totalHpp});
+    entries.push({id:'sim-'+sale.id, tanggal:todayISO(), keterangan:'[SIMULASI BELUM OTORISASI] '+sale.noFaktur, sumber:'simulasi-pending', lines});
+  });
+  return entries;
+}
+function renderPerbandingan(){
+  if(!currentUser || currentUser.role!=='superadmin'){ return `<div class="empty">Halaman ini khusus Super Admin.</div>`; }
+  const y = S.draft.pbTahun || new Date().getFullYear();
+  const today = todayISO();
+  const start = y+'-01-01'; const end = (y+'-12-31')<today?(y+'-12-31'):today;
+  const lrResmi = labaRugi(start,end);
+  const simEntries = simulatePendingEntries();
+  const lrSimulasi = withJournal([...S.journal, ...simEntries], ()=>labaRugi(start,end));
+  const neracaResmi = neraca(end);
+  const neracaSimulasi = withJournal([...S.journal, ...simEntries], ()=>neraca(end));
+  const pendingCount = S.sales.filter(s=>s.status==='pending'||!s.status).length;
+  return `
+  <div class="note">Halaman khusus Super Admin: membandingkan laporan keuangan <b>resmi</b> (hanya transaksi yang sudah diotorisasi — inilah yang dilihat Admin biasa) dengan <b>simulasi</b> jika seluruh ${pendingCount} transaksi penjualan yang masih pending ikut dianggap terotorisasi. Simulasi ini TIDAK mengubah data asli, hanya untuk perbandingan/analisis.</div>
+  <div class="card"><div class="cardhead"><h2>Pilih Tahun</h2></div><input type="number" id="pb-tahun" value="${y}" style="max-width:160px"></div>
+  <div class="grid2">
+    <div class="card"><div class="cardhead"><h2>Laba Rugi — Resmi (Sudah Diotorisasi)</h2></div>
+      <table><tbody>
+      <tr><td>Pendapatan</td><td class="num">${fmtRp(lrResmi.pendapatan)}</td></tr>
+      <tr><td>HPP</td><td class="num">${fmtRp(lrResmi.hpp)}</td></tr>
+      <tr class="totalrow"><td>Laba Kotor</td><td class="num">${fmtRp(lrResmi.labaKotor)}</td></tr>
+      <tr><td>Beban</td><td class="num">${fmtRp(lrResmi.beban)}</td></tr>
+      <tr class="totalrow"><td>Laba Bersih</td><td class="num">${fmtRp(lrResmi.labaBersih)}</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card"><div class="cardhead"><h2>Laba Rugi — Simulasi (Termasuk Pending)</h2></div>
+      <table><tbody>
+      <tr><td>Pendapatan</td><td class="num">${fmtRp(lrSimulasi.pendapatan)}</td></tr>
+      <tr><td>HPP</td><td class="num">${fmtRp(lrSimulasi.hpp)}</td></tr>
+      <tr class="totalrow"><td>Laba Kotor</td><td class="num">${fmtRp(lrSimulasi.labaKotor)}</td></tr>
+      <tr><td>Beban</td><td class="num">${fmtRp(lrSimulasi.beban)}</td></tr>
+      <tr class="totalrow"><td>Laba Bersih</td><td class="num">${fmtRp(lrSimulasi.labaBersih)}</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card"><div class="cardhead"><h2>Neraca — Resmi</h2></div>
+      <table><tbody>
+      <tr><td>Total Aset</td><td class="num">${fmtRp(neracaResmi.totalAset)}</td></tr>
+      <tr><td>Total Kewajiban</td><td class="num">${fmtRp(neracaResmi.totalKewajiban)}</td></tr>
+      <tr class="totalrow"><td>Total Modal</td><td class="num">${fmtRp(neracaResmi.totalModal)}</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card"><div class="cardhead"><h2>Neraca — Simulasi</h2></div>
+      <table><tbody>
+      <tr><td>Total Aset</td><td class="num">${fmtRp(neracaSimulasi.totalAset)}</td></tr>
+      <tr><td>Total Kewajiban</td><td class="num">${fmtRp(neracaSimulasi.totalKewajiban)}</td></tr>
+      <tr class="totalrow"><td>Total Modal</td><td class="num">${fmtRp(neracaSimulasi.totalModal)}</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+  <div class="card"><div class="cardhead"><h2>Selisih</h2></div>
+    <table><tbody>
+      <tr><td>Selisih Laba Bersih (Simulasi − Resmi)</td><td class="num">${fmtRp(lrSimulasi.labaBersih-lrResmi.labaBersih)}</td></tr>
+      <tr><td>Selisih Total Aset (Simulasi − Resmi)</td><td class="num">${fmtRp(neracaSimulasi.totalAset-neracaResmi.totalAset)}</td></tr>
+    </tbody></table>
+  </div>`;
+}
+
+/* ============================= ADMINISTRASI: MANAJEMEN USER ============================= */
+function renderSetupUsers(){
+  if(!currentUser || currentUser.role!=='superadmin'){ return `<div class="empty">Halaman ini khusus Super Admin.</div>`; }
+  const editing = S.draft.editing && S.draft.editing.user;
+  const editU = editing ? S.users.find(u=>u.id===editing) : null;
+  const rows = S.users.map(u=>`<tr><td>${esc(u.username)}</td><td>${esc(u.nama)}</td><td><span class="badge badge-muted">${ROLES[u.role]||u.role}</span></td><td>${u.createdAt?fmtDate(u.createdAt.slice(0,10)):'-'}</td>
+    <td><span class="linklike" data-action="editUser" data-id="${u.id}">Edit</span> · <span class="linklike" data-action="deleteUser" data-id="${u.id}">Hapus</span></td></tr>`).join('');
+  const roleOpts = Object.entries(ROLES).map(([k,v])=>`<option value="${k}" ${editU&&editU.role===k?'selected':''}>${v}</option>`).join('');
+  const logRows = (S.activityLog||[]).slice().reverse().slice(0,60).map(l=>`<tr><td>${new Date(l.waktu).toLocaleString('id-ID')}</td><td>${esc(l.nama||l.username)}</td><td>${esc(l.desc)}</td></tr>`).join('');
+  return `
+  <div class="note">Hanya Super Admin yang bisa mengelola user. Password disimpan dalam bentuk hash (SHA-256) di penyimpanan lokal aplikasi — cukup untuk memisahkan akses antar staf, namun bukan pengganti sistem otentikasi server yang sesungguhnya.</div>
+  <div class="card">
+    <div class="cardhead"><h2>${editU?'Edit User — '+esc(editU.username):'Tambah User'}</h2></div>
+    <form id="form-user" class="grid4">
+      <div class="field"><label>Username</label><input type="text" name="username" required value="${editU?esc(editU.username):''}" ${editU?'readonly':''}></div>
+      <div class="field"><label>Nama Lengkap</label><input type="text" name="nama" required value="${editU?esc(editU.nama):''}"></div>
+      <div class="field"><label>Role</label><select name="role">${roleOpts}</select></div>
+      <div class="field"><label>${editU?'Password Baru (kosongkan jika tidak diubah)':'Password'}</label><input type="password" name="password" ${editU?'':'required'}></div>
+      <div class="field" style="grid-column:1/-1">
+        <button class="btn btn-primary" type="submit">${editU?'Update User':'Tambah User'}</button>
+        ${editU?`<button class="btn btn-sm" type="button" data-action="cancelEdit" data-id="user">Batal</button>`:''}
+      </div>
+    </form>
+  </div>
+  <div class="card"><div class="cardhead"><h2>Daftar User (${S.users.length})</h2></div>
+    <table><thead><tr><th>Username</th><th>Nama</th><th>Role</th><th>Dibuat</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+  </div>
+  <div class="card"><div class="cardhead"><h2>Log Login &amp; Aktivitas (60 terakhir)</h2></div>
+    ${logRows? `<table><thead><tr><th>Waktu</th><th>User</th><th>Aktivitas</th></tr></thead><tbody>${logRows}</tbody></table>`:`<div class="empty">Belum ada log.</div>`}
+  </div>`;
+}
+
 /* ============================= ACTIONS: CLICK ============================= */
-document.addEventListener('DOMContentLoaded', async ()=>{ await loadAll(); render(); });
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await loadAll();
+  const logoEl = document.getElementById('loginLogo'); if(logoEl) logoEl.innerHTML = LOGO_SVG;
+  if(!S.users || !S.users.length){
+    const defaultHash = await hashPassword('admin123');
+    S.users = [{id:uid(), username:'admin', passwordHash:defaultHash, role:'superadmin', nama:'Administrator', createdAt:new Date().toISOString()}];
+    await saveKey('users', S.users);
+    document.getElementById('login-title').textContent = 'Setup Awal — Akun Super Admin Dibuat';
+    document.getElementById('login-error').innerHTML = '<span style="color:var(--teal-dark)">Akun pertama dibuat otomatis:<br><b>Username: admin</b> &nbsp; <b>Password: admin123</b><br>Segera ganti password ini setelah login lewat Manajemen User.</span>';
+  }
+});
+document.getElementById('form-login').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const username = fd.get('username').trim();
+  const password = fd.get('password');
+  const user = S.users.find(u=>u.username.toLowerCase()===username.toLowerCase());
+  const errEl = document.getElementById('login-error');
+  if(!user){ errEl.textContent = 'Username tidak ditemukan.'; return; }
+  const hash = await hashPassword(password);
+  if(hash !== user.passwordHash){ errEl.textContent = 'Password salah.'; return; }
+  currentUser = {id:user.id, username:user.username, nama:user.nama, role:user.role};
+  await logActivity('Login');
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('shell').style.display = 'flex';
+  render();
+});
 
 document.addEventListener('click', async (e)=>{
   const t = e.target.closest('[data-action]');
@@ -1816,10 +2201,21 @@ document.addEventListener('click', async (e)=>{
   if(action==='toggleGroup'){ if(!S.collapsed) S.collapsed={}; S.collapsed[id] = !isCollapsed(id); render(); return; }
   if(action==='toggleSidebar'){ document.getElementById('shell').classList.toggle('sidebar-open'); return; }
   if(action==='closeSidebar'){ document.getElementById('shell').classList.remove('sidebar-open'); return; }
+  if(action==='logout'){
+    if(!confirm('Keluar dari sesi ini?')) return;
+    logActivity('Logout');
+    currentUser = null;
+    document.getElementById('shell').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('form-login').reset();
+    document.getElementById('login-error').textContent = '';
+    return;
+  }
   if(action==='nav'){ S.tab=id; S.draft={}; document.getElementById('shell').classList.remove('sidebar-open'); render(); return; }
   if(action==='exportPdf'){ exportPdf(id); return; }
   if(action==='exportExcel'){ exportExcel(id); return; }
-  if(action==='printInvoice'){ printInvoice(id); return; }
+  if(action==='printInvoice'){ printInvoice(id,'download'); return; }
+  if(action==='printInvoiceDirect'){ printInvoice(id,'print'); return; }
 
   if(action==='backupExport'){
     const data = {coa:S.coa,journal:S.journal,items:S.items,sales:S.sales,purchases:S.purchases,assets:S.assets,customers:S.customers,vendors:S.vendors,meta:S.meta};
@@ -1845,6 +2241,27 @@ document.addEventListener('click', async (e)=>{
     S.journal = S.journal.filter(e=>!orphanIds.has(e.id));
     await saveKey('journal', S.journal);
     alert(orphans.length+' jurnal yatim berhasil dibersihkan.');
+    render(); return;
+  }
+  if(action==='tutupBuku'){
+    if(!hasPermission('tutupBuku')){ alert('Hanya Super Admin yang dapat melakukan tutup buku.'); return; }
+    const period = id;
+    if(!confirm('Tutup buku periode '+MONTH_NAMES[Number(period.slice(5,7))-1]+' '+period.slice(0,4)+'?\nSetelah ditutup, TIDAK ADA transaksi baru yang bisa diposting dengan tanggal di bulan ini atau sebelumnya. Tindakan ini bisa dibuka kembali lewat tombol "Buka Kembali" bila diperlukan.')) return;
+    S.meta.tutupBukuSampai = period;
+    await saveKey('meta', S.meta);
+    await logActivity('Tutup buku periode '+period);
+    alert('Buku periode '+period+' berhasil ditutup.');
+    render(); return;
+  }
+  if(action==='bukaTutupBuku'){
+    if(!hasPermission('tutupBuku')){ alert('Hanya Super Admin yang dapat membuka kembali tutup buku.'); return; }
+    if(!confirm('Buka kembali periode '+id+'? Transaksi pada bulan ini akan bisa diedit/ditambah lagi.')) return;
+    const [y,m] = id.split('-').map(Number);
+    let py=y, pm=m-1; if(pm<1){pm=12;py--;}
+    S.meta.tutupBukuSampai = (S.journal.some(e=>monthKey(e.tanggal)<id) ) ? (py+'-'+String(pm).padStart(2,'0')) : '';
+    if(S.meta.tutupBukuSampai===id) S.meta.tutupBukuSampai='';
+    await saveKey('meta', S.meta);
+    await logActivity('Buka kembali tutup buku periode '+id);
     render(); return;
   }
   if(action==='exportCsv'){
@@ -1905,6 +2322,20 @@ document.addEventListener('click', async (e)=>{
   if(action==='editVendor'){ if(!S.draft.editing) S.draft.editing={}; S.draft.editing.vendor=id; render(); return; }
   if(action==='editItem'){ if(!S.draft.editing) S.draft.editing={}; S.draft.editing.item=id; render(); return; }
   if(action==='editAsset'){ if(!S.draft.editing) S.draft.editing={}; S.draft.editing.asset=id; render(); return; }
+  if(action==='editUser'){
+    if(!currentUser || currentUser.role!=='superadmin'){ alert('Hanya Super Admin.'); return; }
+    if(!S.draft.editing) S.draft.editing={}; S.draft.editing.user=id; render(); return;
+  }
+  if(action==='deleteUser'){
+    if(!currentUser || currentUser.role!=='superadmin'){ alert('Hanya Super Admin.'); return; }
+    if(id===currentUser.id){ alert('Tidak bisa menghapus akun yang sedang login.'); return; }
+    if(S.users.length<=1){ alert('Tidak bisa menghapus user terakhir.'); return; }
+    if(!confirm('Hapus user ini?')) return;
+    S.users = S.users.filter(u=>u.id!==id);
+    await saveKey('users', S.users);
+    await logActivity('Hapus user id '+id);
+    render(); return;
+  }
   if(action==='cancelEdit'){ if(S.draft.editing) S.draft.editing[id]=null; render(); return; }
   if(action==='deleteJurnal'){ if(!confirm('Hapus jurnal ini?')) return; S.journal=S.journal.filter(j=>j.id!==id); await saveKey('journal',S.journal); render(); return; }
 
@@ -1912,7 +2343,7 @@ document.addEventListener('click', async (e)=>{
   if(action==='removeJurnalLine'){ S.draft.journalLines.splice(Number(id),1); render(); return; }
   if(action==='addSaleLine'){ S.draft.saleItems.push({itemId:'',qty:1,harga:0,diskon:0,noBatch:'',tglEd:''}); render(); return; }
   if(action==='removeSaleLine'){ S.draft.saleItems.splice(Number(id),1); render(); return; }
-  if(action==='addPurchaseLine'){ S.draft.purchaseItems.push({itemId:'',qty:1,harga:0,noBatch:'',tglEd:''}); render(); return; }
+  if(action==='addPurchaseLine'){ S.draft.purchaseItems.push({itemId:'',qty:1,harga:0,diskon:0,noBatch:'',tglEd:''}); render(); return; }
   if(action==='removePurchaseLine'){ S.draft.purchaseItems.splice(Number(id),1); render(); return; }
 
   if(action==='hpTab'){ S.draft.hpTab=id; render(); return; }
@@ -1920,9 +2351,12 @@ document.addEventListener('click', async (e)=>{
   if(action==='returTab'){ S.draft.returTab=id; render(); return; }
 
   if(action==='approveSale'){
+    if(!currentUser || currentUser.role!=='superadmin'){ alert('Hanya Super Admin yang dapat melakukan otorisasi penjualan.'); return; }
     const sale = S.sales.find(s=>s.id===id); if(!sale){ return; }
     if(sale.status==='approved'){ return; }
-    if(!confirm('Otorisasi penjualan '+sale.noFaktur+' sebesar '+fmtRp(sale.total)+'?\nStok akan berkurang dan jurnal akan terbentuk setelah ini.')) return;
+    const tglOtorisasi = todayISO();
+    if(isPeriodClosed(tglOtorisasi)){ alert('Tidak bisa otorisasi: periode '+monthKey(tglOtorisasi)+' sudah ditutup buku.'); return; }
+    if(!confirm('Otorisasi penjualan '+sale.noFaktur+' sebesar '+fmtRp(sale.total)+'?\nTransaksi akan diakui sebagai penjualan resmi PER TANGGAL HARI INI ('+fmtDate(tglOtorisasi)+') dan masuk laporan keuangan bulan '+MONTH_NAMES[Number(tglOtorisasi.slice(5,7))-1]+' '+tglOtorisasi.slice(0,4)+'.\nStok akan berkurang dan jurnal akan terbentuk setelah ini.')) return;
     const namaOtorisator = prompt('Nama yang mengotorisasi transaksi ini:'); if(namaOtorisator===null) return;
     for(const it of (sale.items||[])){
       const item = findItem(it.itemId);
@@ -1943,14 +2377,17 @@ document.addEventListener('click', async (e)=>{
     lines.push({akun:'2100',debit:0,credit:sale.ppn});
     lines.push({akun:'5000',debit:totalHpp,credit:0});
     lines.push({akun:'1200',debit:0,credit:totalHpp});
-    await postJournal({tanggal:sale.tanggal,keterangan:'Penjualan '+sale.noFaktur+' - '+sale.customerNama,sumber:'penjualan',customerId:sale.customerId,lines});
+    await postJournal({tanggal:tglOtorisasi,keterangan:'Penjualan '+sale.noFaktur+' - '+sale.customerNama+' (dicatat '+fmtDate(sale.tanggal)+')',sumber:'penjualan',customerId:sale.customerId,invoiceId:sale.id,lines});
     sale.status='approved';
+    sale.tanggalOtorisasi = tglOtorisasi;
     sale.dibayar = sale.metode==='Piutang'?0:sale.total;
     sale.approvedBy = namaOtorisator||'-'; sale.approvedAt = new Date().toISOString();
+    await logActivity('Otorisasi penjualan '+sale.noFaktur+' ('+fmtRp(sale.total)+')');
     await saveKey('sales',S.sales);
     render(); return;
   }
   if(action==='rejectSale'){
+    if(!currentUser || currentUser.role!=='superadmin'){ alert('Hanya Super Admin yang dapat menolak transaksi penjualan.'); return; }
     const sale = S.sales.find(s=>s.id===id); if(!sale) return;
     const namaOtorisator = prompt('Nama yang menolak transaksi ini:'); if(namaOtorisator===null) return;
     if(!confirm('Tolak transaksi penjualan '+sale.noFaktur+'? Tindakan ini permanen.')) return;
@@ -1959,6 +2396,7 @@ document.addEventListener('click', async (e)=>{
   }
   if(action==='runDepreciation'){
     const endPeriod = monthKey(todayISO()); let posted=0; let totalBulan=0;
+    if(isPeriodClosed(todayISO())){ alert('Tidak bisa posting: periode '+endPeriod+' sudah ditutup buku.'); return; }
     for(const a of S.assets){
       const maxDepr = a.harga-(a.residu||0);
       if(a.akumulasi >= maxDepr-1) continue;
@@ -1992,6 +2430,10 @@ document.addEventListener('change', (e)=>{
   if(sel.id==='lp-start'){ S.draft.lpStart=sel.value; render(); return; }
   if(sel.id==='lp-end'){ S.draft.lpEnd=sel.value; render(); return; }
   if(sel.id==='lp-customer'){ S.draft.lpCustomer=sel.value; render(); return; }
+  if(sel.id==='lpb-start'){ S.draft.lpbStart=sel.value; render(); return; }
+  if(sel.id==='lpb-end'){ S.draft.lpbEnd=sel.value; render(); return; }
+  if(sel.id==='lpb-vendor'){ S.draft.lpbVendor=sel.value; render(); return; }
+  if(sel.id==='pb-tahun'){ S.draft.pbTahun=Number(sel.value); render(); return; }
   if(sel.id==='bbp-select'){ S.draft.bbpCustomer=sel.value; render(); return; }
   if(sel.id==='bbh-select'){ S.draft.bbhVendor=sel.value; render(); return; }
   if(sel.id==='hp-cust-select'){ S.draft.hpCustomer=sel.value; render(); return; }
@@ -2082,8 +2524,51 @@ async function handleImportRows(kind, rows){
     await importSalesRows(body);
   } else if(kind==='pembelian'){
     await importPurchaseRows(body);
+  } else if(kind==='saldoawal'){
+    await importSaldoAwalRows(body);
   }
   render();
+}
+
+async function importSaldoAwalRows(rows){
+  const cutoffEl = document.getElementById('saldoawal-cutoff');
+  const hapusEl = document.getElementById('saldoawal-hapus-lain');
+  const cutoff = (cutoffEl && cutoffEl.value) || todayISO();
+  const hapusLain = !!(hapusEl && hapusEl.checked);
+  if(isPeriodClosed(cutoff)){ alert('Tidak bisa posting: periode '+monthKey(cutoff)+' sudah ditutup buku.'); return; }
+  S.meta.saldoAwalCutoff = cutoff; await saveKey('meta', S.meta);
+  const importedCodes = new Set();
+  let n=0, skipped=0;
+  for(const r of rows){
+    const code = (r[0]||'').trim();
+    const saldoAwal = Number(r[1]);
+    if(!code || isNaN(saldoAwal)) continue;
+    importedCodes.add(code);
+    const a = acc(code);
+    if(!a){ skipped++; continue; }
+    S.journal = S.journal.filter(e=> !(e.sumber==='saldo-awal' && e.refCode===code));
+    await postSaldoAwalAkun(code, a.name, a.type, saldoAwal, cutoff);
+    a.saldoAwal = saldoAwal;
+    n++;
+  }
+  await saveKey('coa', S.coa);
+  await saveKey('journal', S.journal);
+  let deletedCount=0;
+  if(hapusLain){
+    const toKeep=[];
+    for(const a of S.coa){
+      if(importedCodes.has(a.code)){ toKeep.push(a); continue; }
+      const dipakai = S.journal.some(e=> e.sumber!=='saldo-awal' && e.lines.some(l=>l.akun===a.code));
+      if(dipakai){ toKeep.push(a); continue; }
+      S.journal = S.journal.filter(e=> !(e.sumber==='saldo-awal' && e.refCode===a.code));
+      deletedCount++;
+    }
+    S.coa = toKeep;
+    await saveKey('coa', S.coa);
+    await saveKey('journal', S.journal);
+  }
+  await logActivity('Import saldo awal akun ('+n+' akun, cutoff '+cutoff+')'+(hapusLain?', hapus '+deletedCount+' akun':''));
+  alert('Import saldo awal selesai: '+n+' akun diperbarui'+(skipped?', '+skipped+' kode tidak ditemukan di COA (dilewati)':'')+(hapusLain?', '+deletedCount+' akun tidak terpakai dihapus':'')+'.');
 }
 
 async function importSalesRows(rows){
@@ -2156,22 +2641,26 @@ document.addEventListener('submit', async (e)=>{
 
   if(form.id==='form-akun'){
     const code=fd.get('code').trim(), name=fd.get('name').trim(), type=fd.get('type'), kelompok=fd.get('kelompok')||'';
+    const saldoAwal=Number(fd.get('saldoAwal')||0);
     const editingCode = S.draft.editing && S.draft.editing.akun;
     if(editingCode){
-      if(!confirm('Update akun '+editingCode+' — '+name+'?')) return;
-      const a = acc(editingCode); if(a){ a.name=name; a.type=type; a.kelompok=kelompok; await saveKey('coa',S.coa); }
+      if(!confirm('Update akun '+editingCode+' — '+name+(saldoAwal!==(acc(editingCode)?acc(editingCode).saldoAwal||0:0)?' (saldo awal akan diganti)':'')+'?')) return;
+      const a = acc(editingCode);
+      if(a){
+        a.name=name; a.type=type; a.kelompok=kelompok;
+        if(saldoAwal !== (a.saldoAwal||0)){
+          S.journal = S.journal.filter(e=> !(e.sumber==='saldo-awal' && e.refCode===editingCode));
+          await saveKey('journal', S.journal);
+          await postSaldoAwalAkun(editingCode, name, type, saldoAwal);
+        }
+        a.saldoAwal = saldoAwal;
+        await saveKey('coa',S.coa);
+      }
       S.draft.editing.akun=null; render(); return;
     }
-    const saldoAwal=Number(fd.get('saldoAwal')||0);
     if(S.coa.some(a=>a.code===code)){ alert('Kode akun sudah ada.'); return; }
     S.coa.push({code,name,type,kelompok,saldoAwal}); await saveKey('coa',S.coa);
-    if(saldoAwal){
-      const isDebitNormal = NORMAL_DEBIT[type];
-      const lines = isDebitNormal
-        ? [{akun:code,debit:Math.max(saldoAwal,0),credit:Math.max(-saldoAwal,0)},{akun:'3900',debit:Math.max(-saldoAwal,0),credit:Math.max(saldoAwal,0)}]
-        : [{akun:'3900',debit:Math.max(saldoAwal,0),credit:Math.max(-saldoAwal,0)},{akun:code,debit:Math.max(-saldoAwal,0),credit:Math.max(saldoAwal,0)}];
-      await postJournal({tanggal:todayISO(),keterangan:'Saldo awal akun '+code+' - '+name,sumber:'saldo-awal',refCode:code,lines});
-    }
+    await postSaldoAwalAkun(code, name, type, saldoAwal);
     render(); return;
   }
 
@@ -2241,10 +2730,33 @@ document.addEventListener('submit', async (e)=>{
       S.draft.editing.asset=null; render(); return;
     }
     const kode=fd.get('kode'), tanggal=fd.get('tanggal'), harga=Number(fd.get('harga'));
+    if(isPeriodClosed(tanggal)){ alert('Tidak bisa menambah aset: periode '+monthKey(tanggal)+' sudah ditutup buku.'); return; }
     const newAssetId = uid();
     S.assets.push({id:newAssetId,kode,nama,tanggal,harga,umur,residu,akumulasi:0,lastDeprPeriod:null});
     await saveKey('assets',S.assets);
     await postJournal({tanggal,keterangan:'Perolehan aset '+nama,sumber:'perolehan-aset',assetId:newAssetId,lines:[{akun:'1900',debit:harga,credit:0},{akun:'1000',debit:0,credit:harga}]});
+    render(); return;
+  }
+  if(form.id==='form-user'){
+    if(!currentUser || currentUser.role!=='superadmin'){ alert('Hanya Super Admin yang bisa mengelola user.'); return; }
+    const username=fd.get('username').trim(), nama=fd.get('nama').trim(), role=fd.get('role'), password=fd.get('password');
+    const editingId = S.draft.editing && S.draft.editing.user;
+    if(editingId){
+      if(!confirm('Update user "'+username+'"?')) return;
+      const u = S.users.find(x=>x.id===editingId);
+      if(u){
+        u.nama=nama; u.role=role;
+        if(password){ u.passwordHash = await hashPassword(password); }
+        await saveKey('users',S.users);
+        await logActivity('Update user '+username);
+      }
+      S.draft.editing.user=null; render(); return;
+    }
+    if(S.users.some(u=>u.username.toLowerCase()===username.toLowerCase())){ alert('Username sudah dipakai.'); return; }
+    const passwordHash = await hashPassword(password);
+    S.users.push({id:uid(), username, nama, role, passwordHash, createdAt:new Date().toISOString()});
+    await saveKey('users',S.users);
+    await logActivity('Tambah user '+username+' ('+ROLES[role]+')');
     render(); return;
   }
 
@@ -2252,24 +2764,28 @@ document.addEventListener('submit', async (e)=>{
     const lines = S.draft.journalLines.filter(l=>l.akun && (Number(l.debit)||Number(l.credit))).map(l=>({akun:l.akun,debit:Number(l.debit)||0,credit:Number(l.credit)||0}));
     if(lines.length<2){ alert('Minimal 2 baris jurnal.'); return; }
     if(!journalBalanced(lines)){ alert('Jurnal belum balance.'); return; }
+    if(isPeriodClosed(fd.get('tanggal'))){ alert('Tidak bisa posting: periode '+monthKey(fd.get('tanggal'))+' sudah ditutup buku.'); return; }
     await postJournal({tanggal:fd.get('tanggal'),keterangan:fd.get('keterangan'),sumber:'manual',lines});
     S.draft.journalLines=null; render(); return;
   }
   if(form.id==='form-kasbank'){
     const jumlah=Number(fd.get('jumlah')); const akunKas=fd.get('akunKas'), akunLawan=fd.get('akunLawan'), jenis=fd.get('jenis');
     if(!jumlah){ alert('Jumlah harus diisi.'); return; }
+    if(isPeriodClosed(fd.get('tanggal'))){ alert('Tidak bisa posting: periode '+monthKey(fd.get('tanggal'))+' sudah ditutup buku.'); return; }
     const lines = jenis==='masuk' ? [{akun:akunKas,debit:jumlah,credit:0},{akun:akunLawan,debit:0,credit:jumlah}] : [{akun:akunLawan,debit:jumlah,credit:0},{akun:akunKas,debit:0,credit:jumlah}];
     await postJournal({tanggal:fd.get('tanggal'),keterangan:fd.get('keterangan'),sumber:'kas-bank',lines});
     render(); return;
   }
   if(form.id==='form-biaya'){
     const akunBeban=fd.get('akunBeban'), jumlah=Number(fd.get('jumlah')), akunBayar=fd.get('metode');
+    if(isPeriodClosed(fd.get('tanggal'))){ alert('Tidak bisa posting: periode '+monthKey(fd.get('tanggal'))+' sudah ditutup buku.'); return; }
     await postJournal({tanggal:fd.get('tanggal'),keterangan:fd.get('keterangan'),sumber:'biaya',lines:[{akun:akunBeban,debit:jumlah,credit:0},{akun:akunBayar,debit:0,credit:jumlah}]});
     render(); return;
   }
   if(form.id==='form-stock-adjust'){
     const itemId=fd.get('itemId'), jenis=fd.get('jenis'), qty=Number(fd.get('qty')), keterangan=fd.get('keterangan'), tanggal=fd.get('tanggal');
     const it = findItem(itemId); if(!it){ alert('Pilih barang.'); return; }
+    if(isPeriodClosed(tanggal)){ alert('Tidak bisa posting: periode '+monthKey(tanggal)+' sudah ditutup buku.'); return; }
     if(jenis==='tambah'){
       await stockIn(itemId, qty, it.hpp||0);
       await postJournal({tanggal,keterangan:'Stok opname (+) '+it.nama+' — '+keterangan,sumber:'stok-opname',lines:[{akun:'1200',debit:qty*(it.hpp||0),credit:0},{akun:'6095',debit:0,credit:qty*(it.hpp||0)}]});
@@ -2282,12 +2798,19 @@ document.addEventListener('submit', async (e)=>{
   if(form.id==='form-pembelian'){
     const validLines = S.draft.purchaseItems.filter(l=>l.itemId && l.qty>0);
     if(!validLines.length){ alert('Tambahkan minimal satu barang.'); return; }
-    const subtotal = validLines.reduce((s,l)=>s+l.qty*l.harga,0);
+    if(isPeriodClosed(fd.get('tanggal'))){ alert('Tidak bisa posting: periode '+monthKey(fd.get('tanggal'))+' sudah ditutup buku.'); return; }
+    const subtotal = validLines.reduce((s,l)=>s+Math.round(l.qty*l.harga*(1-(l.diskon||0)/100)),0);
     const ppn = Math.round(subtotal*ppnRate()); const total = subtotal+ppn;
     const metode = fd.get('metode'); const vendorId = fd.get('vendorId')||'';
     const noFaktur = fd.get('noFaktur') || ((S.meta.prefixPO||'PO')+'-'+String(S.purchases.length+1).padStart(5,'0'));
     const lineItems=[];
-    for(const l of validLines){ await stockIn(l.itemId,l.qty,l.harga); const it=findItem(l.itemId); lineItems.push({itemId:l.itemId,itemNama:it?it.nama:'',qty:l.qty,harga:l.harga,noBatch:l.noBatch||'',tglEd:l.tglEd||''}); }
+    for(const l of validLines){
+      const nominal = Math.round(l.qty*l.harga*(1-(l.diskon||0)/100));
+      const unitCostNet = nominal/l.qty;
+      await stockIn(l.itemId,l.qty,unitCostNet);
+      const it=findItem(l.itemId);
+      lineItems.push({itemId:l.itemId,itemNama:it?it.nama:'',qty:l.qty,harga:l.harga,diskon:l.diskon||0,nominal,noBatch:l.noBatch||'',tglEd:l.tglEd||''});
+    }
     const akunLawan = metode==='Tunai'?'1000':metode==='Transfer'?'1010':'2000';
     const lines=[{akun:'1200',debit:subtotal,credit:0},{akun:'1300',debit:ppn,credit:0},{akun:akunLawan,debit:0,credit:total}];
     const je = await postJournal({tanggal:fd.get('tanggal'),keterangan:'Pembelian '+noFaktur+' - '+(vendorId?vendName(vendorId):'Umum'),sumber:'pembelian',vendorId,lines});
@@ -2316,6 +2839,7 @@ document.addEventListener('submit', async (e)=>{
   if(form.id==='form-bayar-piutang'){
     const customerId=fd.get('customerId'), invoiceId=fd.get('invoiceId'), tanggal=fd.get('tanggal'), akunKas=fd.get('akunKas'), jumlah=Number(fd.get('jumlah'));
     if(!invoiceId){ alert('Tidak ada invoice terbuka untuk pelanggan ini.'); return; }
+    if(isPeriodClosed(tanggal)){ alert('Tidak bisa posting: periode '+monthKey(tanggal)+' sudah ditutup buku.'); return; }
     const inv = S.sales.find(s=>s.id===invoiceId); if(!inv){ alert('Invoice tidak ditemukan.'); return; }
     let akunSumber = akunKas;
     if(akunKas.startsWith('dp:')){
@@ -2332,6 +2856,7 @@ document.addEventListener('submit', async (e)=>{
   if(form.id==='form-bayar-hutang'){
     const vendorId=fd.get('vendorId'), invoiceId=fd.get('invoiceId'), tanggal=fd.get('tanggal'), akunKas=fd.get('akunKas'), jumlah=Number(fd.get('jumlah'));
     if(!invoiceId){ alert('Tidak ada invoice terbuka untuk pemasok ini.'); return; }
+    if(isPeriodClosed(tanggal)){ alert('Tidak bisa posting: periode '+monthKey(tanggal)+' sudah ditutup buku.'); return; }
     const po = S.purchases.find(p=>p.id===invoiceId); if(!po){ alert('Invoice tidak ditemukan.'); return; }
     let akunSumber = akunKas;
     if(akunKas.startsWith('dp:')){
@@ -2348,6 +2873,7 @@ document.addEventListener('submit', async (e)=>{
   if(form.id==='form-dp-terima'){
     const customerId=fd.get('customerId'), tanggal=fd.get('tanggal'), akunKas=fd.get('akunKas'), jumlah=Number(fd.get('jumlah')), keterangan=fd.get('keterangan')||'';
     if(!customerId||!jumlah){ alert('Lengkapi pelanggan dan jumlah.'); return; }
+    if(isPeriodClosed(tanggal)){ alert('Tidak bisa posting: periode '+monthKey(tanggal)+' sudah ditutup buku.'); return; }
     const dp = {id:uid(), tanggal, customerId, jumlah, terpakai:0, keterangan};
     S.dpReceived.push(dp); await saveKey('dp-received', S.dpReceived);
     await postJournal({tanggal, keterangan:'Terima uang muka penjualan - '+custName(customerId)+(keterangan?' ('+keterangan+')':''), sumber:'dp-penjualan', customerId, lines:[{akun:akunKas,debit:jumlah,credit:0},{akun:'2106',debit:0,credit:jumlah}]});
@@ -2356,6 +2882,7 @@ document.addEventListener('submit', async (e)=>{
   if(form.id==='form-dp-bayar'){
     const vendorId=fd.get('vendorId'), tanggal=fd.get('tanggal'), akunKas=fd.get('akunKas'), jumlah=Number(fd.get('jumlah')), keterangan=fd.get('keterangan')||'';
     if(!vendorId||!jumlah){ alert('Lengkapi pemasok dan jumlah.'); return; }
+    if(isPeriodClosed(tanggal)){ alert('Tidak bisa posting: periode '+monthKey(tanggal)+' sudah ditutup buku.'); return; }
     const dp = {id:uid(), tanggal, vendorId, jumlah, terpakai:0, keterangan};
     S.dpPaid.push(dp); await saveKey('dp-paid', S.dpPaid);
     await postJournal({tanggal, keterangan:'Bayar uang muka pembelian - '+vendName(vendorId)+(keterangan?' ('+keterangan+')':''), sumber:'dp-pembelian', vendorId, lines:[{akun:'1103',debit:jumlah,credit:0},{akun:akunKas,debit:0,credit:jumlah}]});
@@ -2363,6 +2890,7 @@ document.addEventListener('submit', async (e)=>{
   }
   if(form.id==='form-retur-penjualan'){
     const invoiceId=fd.get('invoiceId'), lineIndex=Number(fd.get('lineIndex')), tanggal=fd.get('tanggal'), qtyRetur=Number(fd.get('qty'));
+    if(isPeriodClosed(tanggal)){ alert('Tidak bisa posting: periode '+monthKey(tanggal)+' sudah ditutup buku.'); return; }
     const sale = S.sales.find(s=>s.id===invoiceId); if(!sale){ alert('Pilih invoice.'); return; }
     const line = sale.items[lineIndex]; if(!line){ alert('Pilih barang.'); return; }
     const sisaQty = line.qty-(line.qtyRetur||0);
@@ -2386,11 +2914,12 @@ document.addEventListener('submit', async (e)=>{
   }
   if(form.id==='form-retur-pembelian'){
     const invoiceId=fd.get('invoiceId'), lineIndex=Number(fd.get('lineIndex')), tanggal=fd.get('tanggal'), qtyRetur=Number(fd.get('qty'));
+    if(isPeriodClosed(tanggal)){ alert('Tidak bisa posting: periode '+monthKey(tanggal)+' sudah ditutup buku.'); return; }
     const po = S.purchases.find(p=>p.id===invoiceId); if(!po){ alert('Pilih invoice.'); return; }
     const line = po.items[lineIndex]; if(!line){ alert('Pilih barang.'); return; }
     const sisaQty = line.qty-(line.qtyRetur||0);
     if(!qtyRetur || qtyRetur<=0 || qtyRetur>sisaQty){ alert('Qty retur tidak valid (maks '+sisaQty+').'); return; }
-    const nominalRetur = Math.round(line.harga*qtyRetur);
+    const nominalRetur = Math.round((line.nominal!=null? line.nominal/line.qty : line.harga)*qtyRetur);
     const ppnRetur = Math.round(nominalRetur*ppnRate());
     const item = findItem(line.itemId);
     const akunLawan = po.metode==='Tunai'?'1000':po.metode==='Transfer'?'1010':'2000';
