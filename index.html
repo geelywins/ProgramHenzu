@@ -13,6 +13,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <style>
   :root{
     --navy:#0f1c30; --navy-2:#18294a; --navy-3:#213a63; --teal:#12967e; --teal-dark:#0d7a66; --teal-light:#e4f5f1;
@@ -376,11 +378,83 @@ let S = { coa:[], journal:[], items:[], sales:[], purchases:[], assets:[], custo
 let currentUser = null;
 
 /* ============================= STORAGE ============================= */
+/* ============================= CLOUD STORAGE (Firebase Firestore) — opsional ============================= */
+// Setelah Anda punya project Firebase, ganti FIREBASE_CONFIG di bawah ini dengan config asli Anda
+// (Firebase Console > Project Settings > General > Your apps > SDK setup and configuration).
+// Selama masih null, aplikasi otomatis memakai penyimpanan lokal (window.storage) seperti sebelumnya.
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDZugz-CAgoRoQ2oeF8VqRbKa5KBRUye5k",
+  authDomain: "app-henzu.firebaseapp.com",
+  projectId: "app-henzu",
+  storageBucket: "app-henzu.firebasestorage.app",
+  messagingSenderId: "1026174406339",
+  appId: "1:1026174406339:web:e52edd0463203b33a45c76"
+};
+let firestoreDb = null;
+let cloudReady = false;
+if(FIREBASE_CONFIG){
+  try{
+    firebase.initializeApp(FIREBASE_CONFIG);
+    firestoreDb = firebase.firestore();
+    cloudReady = true;
+  }catch(e){ console.error('Gagal inisialisasi Firebase, memakai penyimpanan lokal.', e); }
+}
+// Kunci yang datanya berupa daftar/array — disimpan satu dokumen per item (bukan satu dokumen raksasa)
+// supaya tidak pernah kena batas ukuran 1MB per dokumen di Firestore, walau datanya sudah bertahun-tahun.
+const ARRAY_KEYS = new Set(['coa','journal','items','sales','purchases','assets','customers','vendors','returs','dp-received','dp-paid','users','activity-log']);
+function itemDocId(item, idx){
+  const raw = (item && (item.id ?? item.code ?? item.kode));
+  return String(raw!==undefined && raw!==null && raw!=='' ? raw : idx).replace(/[\/\s]/g,'_');
+}
 async function loadKey(key, fallback){
+  if(firestoreDb){
+    try{
+      if(ARRAY_KEYS.has(key)){
+        const snap = await firestoreDb.collection('appdata').doc(key).collection('items').get();
+        if(!snap.empty) return snap.docs.map(d=>JSON.parse(d.data().value));
+        // migrasi dari format lama (satu dokumen besar), jika pernah tersimpan begitu
+        const legacy = await firestoreDb.collection('appdata').doc(key).get();
+        if(legacy.exists && legacy.data().value!==undefined){
+          const arr = JSON.parse(legacy.data().value);
+          if(Array.isArray(arr) && arr.length){ await saveKey(key, arr); return arr; }
+        }
+        return fallback;
+      }else{
+        const doc = await firestoreDb.collection('appdata').doc(key).get();
+        if(!doc.exists || doc.data().value===undefined) return fallback;
+        return JSON.parse(doc.data().value);
+      }
+    }catch(e){ console.error('Gagal memuat dari cloud, coba lokal.', key, e); }
+  }
   try{ const r = await window.storage.get(key, false); if(!r || r.value===undefined) return fallback; return JSON.parse(r.value); }
   catch(e){ return fallback; }
 }
 async function saveKey(key, value){
+  if(firestoreDb){
+    try{
+      if(ARRAY_KEYS.has(key) && Array.isArray(value)){
+        const col = firestoreDb.collection('appdata').doc(key).collection('items');
+        const existingSnap = await col.get();
+        const existingMap = new Map(existingSnap.docs.map(d=>[d.id, d.data().value]));
+        const newIds = new Set();
+        let batch = firestoreDb.batch(); let ops = 0;
+        const flush = async()=>{ if(ops>0){ await batch.commit(); batch = firestoreDb.batch(); ops=0; } };
+        for(let i=0;i<value.length;i++){
+          const item = value[i]; const docId = itemDocId(item, i); newIds.add(docId);
+          const json = JSON.stringify(item);
+          if(existingMap.get(docId) !== json){ batch.set(col.doc(docId), {value: json, updatedAt:new Date().toISOString()}); ops++; if(ops>=450) await flush(); }
+        }
+        for(const oldId of existingMap.keys()){
+          if(!newIds.has(oldId)){ batch.delete(col.doc(oldId)); ops++; if(ops>=450) await flush(); }
+        }
+        await flush();
+        return;
+      } else {
+        await firestoreDb.collection('appdata').doc(key).set({value: JSON.stringify(value), updatedAt:new Date().toISOString()});
+        return;
+      }
+    }catch(e){ console.error('Gagal menyimpan ke cloud', key, e); }
+  }
   try{ await window.storage.set(key, JSON.stringify(value), false); }
   catch(e){ console.error('Gagal menyimpan', key, e); }
 }
@@ -587,7 +661,10 @@ function neraca(asOf){
 /* ============================= HEADER (simple) ============================= */
 function renderTopbar(){
   const el = document.getElementById('topbar');
-  el.innerHTML = `<div style="display:flex;align-items:center;gap:12px;"><div class="hamburger-btn" data-action="toggleSidebar">☰</div><div class="topbar-logo">${LOGO_SVG}</div><h1>${esc(TITLES[S.tab]||'')}</h1></div><div class="meta">${esc(S.meta.nama||'')} &nbsp;•&nbsp; ${new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})}</div>`;
+  const cloudBadge = cloudReady
+    ? `<span class="badge badge-ok" title="Data tersimpan di Firebase Firestore">☁️ Cloud Sync Aktif</span>`
+    : `<span class="badge badge-muted" title="Data tersimpan lokal lewat akun Claude — belum tersambung ke database cloud independen">💾 Penyimpanan Lokal</span>`;
+  el.innerHTML = `<div style="display:flex;align-items:center;gap:12px;"><div class="hamburger-btn" data-action="toggleSidebar">☰</div><div class="topbar-logo">${LOGO_SVG}</div><h1>${esc(TITLES[S.tab]||'')}</h1>${cloudBadge}</div><div class="meta">${esc(S.meta.nama||'')} &nbsp;•&nbsp; ${new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'})}</div>`;
 }
 
 /* ============================= NAV / SHELL RENDER (collapsible) ============================= */
