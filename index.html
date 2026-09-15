@@ -193,7 +193,7 @@ const NAV_ICONS = {
   jurnal:'📒',bukubesar:'📘',bukubesarpiutang:'📗',bukubesarhutang:'📕',kartupiutang:'📇',kartuhutang:'📇',
   pelunasanpiutang:'✔️',pelunasanhutang:'✔️',neracasaldo:'⚖️',neracabulan:'⚖️',neracaakhir:'⚖️',
   labarugi:'📈',kumulatif:'📈',rincian:'🔎',laporanpenjualan:'🧮',laporanpembelian:'🧮',perbandingan:'🆚',
-  'setup-users':'🔐',
+  'setup-users':'🔐', 'print-invoice':'🖨️',
   data:'🗄️',
 };
 const NAV = [
@@ -216,6 +216,7 @@ const NAV = [
     ['labarugi','Laba Rugi Tahun Berjalan'],['kumulatif','Laporan Kumulatif'],
     ['rincian','Rincian Laporan Keuangan'],['laporanpenjualan','Laporan Penjualan'],['laporanpembelian','Laporan Pembelian'],['perbandingan','Perbandingan Laporan (Super Admin)']
   ]},
+  {group:'Print', items:[['print-invoice','Print Invoice']]},
   {group:'Administrasi', items:[['setup-users','Manajemen User']]},
   {group:'Data', items:[['data','Pusat Data']]},
 ];
@@ -345,7 +346,7 @@ const ROLES = { superadmin:'Super Admin', admin:'Admin', pembelian:'Staff Pembel
 const ALLOWED_TABS = {
   superadmin: null, // null = semua tab diizinkan
   admin: null, // full akses laporan & pencatatan, tapi tidak bisa otorisasi/tutup buku/kelola user (dicegat lewat hasPermission)
-  pembelian: ['dashboard','pembelian','setup-pemasok','stock','bukubesarpiutang','laporanpembelian'],
+  pembelian: ['pembelian','penjualan','stock','bukubesarhutang','bukubesarpiutang','laporanpembelian','laporanpenjualan','print-invoice'],
 };
 async function hashPassword(pw){
   try{
@@ -607,8 +608,12 @@ function renderNav(){
   document.getElementById('brandName').textContent = S.meta.nama || 'Perusahaan';
   const logoEl = document.getElementById('brandLogo'); if(logoEl && !logoEl.innerHTML) logoEl.innerHTML = LOGO_SVG;
 }
+function firstAllowedTab(role){
+  for(const g of NAV){ for(const [id] of g.items){ if(tabAllowed(id, role)) return id; } }
+  return 'dashboard';
+}
 function render(){
-  if(S.tab!=='dashboard' && currentUser && !tabAllowed(S.tab, currentUser.role)){ S.tab='dashboard'; }
+  if(currentUser && !tabAllowed(S.tab, currentUser.role)){ S.tab = firstAllowedTab(currentUser.role); }
   renderNav(); renderTopbar();
   const c = document.getElementById('content');
   const map = {
@@ -620,7 +625,7 @@ function render(){
     laporanpembelian:renderLaporanPembelian, perbandingan:renderPerbandingan,
     kartupiutang:()=>renderKartuRincian('piutang'), kartuhutang:()=>renderKartuRincian('hutang'),
     pelunasanpiutang:()=>renderPelunasan('piutang'), pelunasanhutang:()=>renderPelunasan('hutang'),
-    otorisasi:renderOtorisasi,
+    otorisasi:renderOtorisasi, 'print-invoice':renderPrintInvoice,
     uangmuka:renderUangMuka, retur:renderRetur,
     data:renderDataCenter, 'setup-users':renderSetupUsers,
     'setup-perusahaan':renderSetupPerusahaan,'setup-preferensi':renderSetupPreferensi,'setup-akun':renderSetupAkun,
@@ -1674,13 +1679,31 @@ function renderOtorisasi(){
   </div>`;
 }
 
-/* ============================= EXPORT: PDF & EXCEL (shared data source) ============================= */
+/* ============================= LAPORAN/CETAK: PRINT INVOICE ============================= */
+function renderPrintInvoice(){
+  const filterCust = S.draft.piCustomer || '';
+  const list = S.sales.filter(s=>s.status==='approved' && (!filterCust || s.customerId===filterCust))
+    .slice()
+    .sort((a,b)=>{ const da=effDate(a), db=effDate(b); if(da!==db) return da<db?1:-1; return (b.approvedAt||'').localeCompare(a.approvedAt||''); });
+  const rows = list.map(s=>`<tr><td>${fmtDate(effDate(s))}</td><td>${esc(s.noFaktur)}</td><td>${esc(s.customerNama)}</td><td class="num">${fmtRp(s.total)}</td>
+    <td class="num">${s.printCount||0}x</td><td>${s.lastPrintedAt? new Date(s.lastPrintedAt).toLocaleString('id-ID') : '-'}</td>
+    <td><span class="linklike" data-action="printInvoiceDirect" data-id="${s.id}">Cetak</span> · <span class="linklike" data-action="printInvoice" data-id="${s.id}">Unduh PDF</span></td></tr>`).join('');
+  return `
+  <div class="note">Daftar invoice yang sudah diotorisasi, diurutkan dari yang <b>terbaru di atas</b>. Setiap kali dicetak/diunduh, penghitung "Jumlah Cetak" bertambah otomatis — berguna untuk kontrol supaya invoice tidak tercetak berkali-kali tanpa sepengetahuan.</div>
+  <div class="card"><div class="cardhead"><h2>Filter</h2></div>
+    <select id="pi-customer"><option value="">Semua Konsumen</option>${S.customers.map(c=>`<option value="${c.id}" ${filterCust===c.id?'selected':''}>${esc(c.nama)}</option>`).join('')}</select>
+  </div>
+  <div class="card"><div class="cardhead"><h2>Print Invoice (${list.length})</h2></div>
+    ${rows? `<table><thead><tr><th>Tanggal</th><th>No.Faktur</th><th>Konsumen</th><th class="num">Grand Total</th><th class="num">Jumlah Cetak</th><th>Terakhir Dicetak</th><th>Aksi</th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="empty">Belum ada invoice yang bisa dicetak.</div>`}
+  </div>`;
+}
+
 function toolbarHtml(key, opts={}){
   const importKind = opts.importKind || key;
   const importBtn = opts.allowImport ? `<button type="button" class="btn btn-sm btn-imp" data-action="importCsv" data-id="${importKind}">Impor Excel/CSV</button>` : '';
   return `<div class="toolbar">${importBtn}<button type="button" class="btn btn-sm btn-xls" data-action="exportExcel" data-id="${key}">Ekspor Excel</button><button type="button" class="btn btn-sm btn-pdf" data-action="exportPdf" data-id="${key}">Unduh PDF</button></div>`;
 }
-function printInvoice(saleId, mode){
+async function printInvoice(saleId, mode){
   mode = mode || 'download';
   const sale = S.sales.find(s=>s.id===saleId);
   if(!sale){ alert('Transaksi tidak ditemukan.'); return; }
@@ -1808,6 +1831,10 @@ function printInvoice(saleId, mode){
     } else {
       doc.save((isDraft?'Draft-':'Invoice-')+sale.noFaktur.replace(/\//g,'-')+'.pdf');
     }
+    sale.printCount = (sale.printCount||0) + 1;
+    sale.lastPrintedAt = new Date().toISOString();
+    await saveKey('sales', S.sales);
+    if(S.tab==='print-invoice'){ render(); }
   }catch(err){ console.error(err); alert('Gagal membuat invoice PDF. Coba lagi.'); }
 }
 function pdfTable(title, head, body, opts={}){
@@ -2187,6 +2214,7 @@ document.getElementById('form-login').addEventListener('submit', async (e)=>{
   const hash = await hashPassword(password);
   if(hash !== user.passwordHash){ errEl.textContent = 'Password salah.'; return; }
   currentUser = {id:user.id, username:user.username, nama:user.nama, role:user.role};
+  S.tab = firstAllowedTab(currentUser.role);
   await logActivity('Login');
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('shell').style.display = 'flex';
@@ -2214,8 +2242,8 @@ document.addEventListener('click', async (e)=>{
   if(action==='nav'){ S.tab=id; S.draft={}; document.getElementById('shell').classList.remove('sidebar-open'); render(); return; }
   if(action==='exportPdf'){ exportPdf(id); return; }
   if(action==='exportExcel'){ exportExcel(id); return; }
-  if(action==='printInvoice'){ printInvoice(id,'download'); return; }
-  if(action==='printInvoiceDirect'){ printInvoice(id,'print'); return; }
+  if(action==='printInvoice'){ await printInvoice(id,'download'); return; }
+  if(action==='printInvoiceDirect'){ await printInvoice(id,'print'); return; }
 
   if(action==='backupExport'){
     const data = {coa:S.coa,journal:S.journal,items:S.items,sales:S.sales,purchases:S.purchases,assets:S.assets,customers:S.customers,vendors:S.vendors,meta:S.meta};
@@ -2430,6 +2458,7 @@ document.addEventListener('change', (e)=>{
   if(sel.id==='lp-start'){ S.draft.lpStart=sel.value; render(); return; }
   if(sel.id==='lp-end'){ S.draft.lpEnd=sel.value; render(); return; }
   if(sel.id==='lp-customer'){ S.draft.lpCustomer=sel.value; render(); return; }
+  if(sel.id==='pi-customer'){ S.draft.piCustomer=sel.value; render(); return; }
   if(sel.id==='lpb-start'){ S.draft.lpbStart=sel.value; render(); return; }
   if(sel.id==='lpb-end'){ S.draft.lpbEnd=sel.value; render(); return; }
   if(sel.id==='lpb-vendor'){ S.draft.lpbVendor=sel.value; render(); return; }
