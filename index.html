@@ -2409,25 +2409,137 @@ const DEV_COLLECTIONS = [
   {key:'activity-log', prop:'activityLog', label:'Log Aktivitas (activityLog)'},
   {key:'meta', prop:'meta', label:'Meta / Pengaturan (meta) — objek, bukan array'},
 ];
+/* ============================= EKSPOR SQL (migrasi database) ============================= */
+function sqlEscVal(v){
+  if(v===null || v===undefined) return 'NULL';
+  if(typeof v==='number') return isFinite(v)? String(v) : 'NULL';
+  if(typeof v==='boolean') return v?1:0;
+  return "'"+String(v).replace(/'/g,"''")+"'";
+}
+function sqlInferType(samples){
+  for(const v of samples){
+    if(v===null||v===undefined) continue;
+    if(typeof v==='number') return Number.isInteger(v)?'INTEGER':'REAL';
+    if(typeof v==='boolean') return 'INTEGER';
+    return 'TEXT';
+  }
+  return 'TEXT';
+}
+function sqlTableFromRows(tableName, rows, extraColsFirst){
+  // extraColsFirst: array kolom tambahan (mis. row_id/parent_id) yg harus tampil duluan & sudah ada nilainya di tiap row
+  const childFields = new Set();
+  rows.forEach(r=>{
+    Object.keys(r).forEach(k=>{
+      const v = r[k];
+      if(Array.isArray(v) && v.length && typeof v[0]==='object' && v[0]!==null){ childFields.add(k); }
+    });
+  });
+  const scalarCols = new Set(extraColsFirst||[]);
+  rows.forEach(r=>{
+    Object.keys(r).forEach(k=>{ if(!childFields.has(k) && !scalarCols.has(k)) scalarCols.add(k); });
+  });
+  const cols = Array.from(scalarCols);
+  const types = cols.map(col=> sqlInferType(rows.map(r=>r[col])));
+  let sql = '-- ===== Tabel: '+tableName+' ('+rows.length+' baris) =====\n';
+  sql += 'CREATE TABLE IF NOT EXISTS "'+tableName+'" (\n  '+cols.map((c,i)=>'"'+c+'" '+types[i]).join(',\n  ')+'\n);\n';
+  rows.forEach(r=>{
+    const vals = cols.map(col=>{
+      const v = r[col];
+      if(v===undefined) return 'NULL';
+      if(v!==null && typeof v==='object') return sqlEscVal(JSON.stringify(v));
+      return sqlEscVal(v);
+    });
+    sql += 'INSERT INTO "'+tableName+'" ("'+cols.join('","')+'") VALUES ('+vals.join(', ')+');\n';
+  });
+  sql += '\n';
+  return {sql, childFields};
+}
+function generateSqlExport(){
+  let out = '-- ============================================================\n';
+  out += '-- Ekspor SQL — '+(S.meta.nama||'Program Akuntansi')+'\n';
+  out += '-- Dibuat otomatis: '+new Date().toISOString()+'\n';
+  out += '-- Sintaks kompatibel SQLite (tipe TEXT/INTEGER/REAL bersifat longgar).\n';
+  out += '-- Untuk MySQL/PostgreSQL: sesuaikan tipe kolom & jalankan lewat tool import (phpMyAdmin/Adminer/psql).\n';
+  out += '-- Cara pakai cepat (SQLite): sqlite3 database.db < file-ini.sql\n';
+  out += '-- Struktur bersarang (item pembelian/penjualan, baris jurnal) otomatis dipecah jadi tabel anak\n';
+  out += '-- dengan kolom parent_id yang merujuk ke id/kode/no induknya.\n';
+  out += '-- ============================================================\n\n';
+  const arrayCollections = DEV_COLLECTIONS.filter(c=>c.key!=='meta');
+  arrayCollections.forEach(c=>{
+    const rows = S[c.prop];
+    if(!Array.isArray(rows) || !rows.length) return;
+    const tableName = c.key.replace(/-/g,'_');
+    const {sql, childFields} = sqlTableFromRows(tableName, rows);
+    out += sql;
+    childFields.forEach(field=>{
+      const childRows = [];
+      rows.forEach(parentRow=>{
+        const parentId = parentRow.id!==undefined ? parentRow.id : (parentRow.code!==undefined? parentRow.code : parentRow.kode);
+        (parentRow[field]||[]).forEach((child,i)=>{
+          childRows.push({row_id: childRows.length+1, parent_id: parentId, item_index:i, ...child});
+        });
+      });
+      if(!childRows.length) return;
+      const childTableName = tableName+'_'+field;
+      const {sql:childSql} = sqlTableFromRows(childTableName, childRows, ['row_id','parent_id','item_index']);
+      out += childSql;
+    });
+  });
+  // meta sebagai tabel key-value tunggal
+  out += '-- ===== Tabel: meta (pengaturan, key-value) =====\n';
+  out += 'CREATE TABLE IF NOT EXISTS "meta" (\n  "key" TEXT,\n  "value" TEXT\n);\n';
+  Object.keys(S.meta||{}).forEach(k=>{
+    const v = S.meta[k];
+    const vOut = (v!==null && typeof v==='object') ? JSON.stringify(v) : v;
+    out += 'INSERT INTO "meta" ("key","value") VALUES ('+sqlEscVal(k)+', '+sqlEscVal(vOut)+');\n';
+  });
+  return out;
+}
+function devRecordSummary(item){
+  if(item===null || typeof item!=='object') return esc(String(item));
+  const f = (k)=> item[k]!==undefined && item[k]!==null && item[k]!=='' ? item[k] : null;
+  const parts = [];
+  const idLike = f('kode')||f('code')||f('username')||f('id');
+  const nameLike = f('nama')||f('name')||f('keterangan')||f('noFaktur')||f('no');
+  if(idLike) parts.push(String(idLike));
+  if(nameLike) parts.push(String(nameLike));
+  if(f('tanggal')) parts.push(fmtDate(item.tanggal));
+  if(f('total')!==null) parts.push(fmtRp(item.total));
+  if(f('role')) parts.push('('+item.role+')');
+  if(!parts.length){ const j=JSON.stringify(item); parts.push(j.length>80?j.slice(0,80)+'…':j); }
+  return esc(parts.join(' — '));
+}
 function renderDevMode(){
   const selKey = S.draft.devCollection || 'coa';
   const col = DEV_COLLECTIONS.find(c=>c.key===selKey) || DEV_COLLECTIONS[0];
   const rawValue = S[col.prop];
-  const jsonText = S.draft.devJsonDraft!==undefined ? S.draft.devJsonDraft : JSON.stringify(rawValue, null, 2);
-  const count = Array.isArray(rawValue) ? rawValue.length : 1;
   const collectionOpts = DEV_COLLECTIONS.map(c=>`<option value="${c.key}" ${c.key===selKey?'selected':''}>${esc(c.label)}</option>`).join('');
+  let explorerBody;
+  if(Array.isArray(rawValue)){
+    const res = paginateTable('dev-'+selKey, rawValue.map((item,idx)=>({item,idx})), r=>JSON.stringify(r.item));
+    const rows = res.pageItems.map(r=>`<tr><td>${r.idx}</td><td>${devRecordSummary(r.item)}</td>
+      <td><span class="linklike" data-action="devEditRecord" data-tid="${selKey}" data-idx="${r.idx}">Edit</span> · <span class="linklike" data-action="devDeleteRecord" data-tid="${selKey}" data-idx="${r.idx}">Hapus</span></td></tr>`).join('');
+    explorerBody = `
+      <div style="margin-bottom:10px;"><button class="btn btn-sm" type="button" data-action="devAddRecord" data-tid="${selKey}">+ Tambah Record Baru</button></div>
+      ${tableToolbar('dev-'+selKey, res, {searchPlaceholder:'Cari di semua field…'})}
+      ${rows? `<table><thead><tr><th style="width:50px">#</th><th>Ringkasan</th><th style="width:120px"></th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="empty">Koleksi ini kosong.</div>`}`;
+  } else {
+    const jsonText = S.draft.devJsonDraft!==undefined ? S.draft.devJsonDraft : JSON.stringify(rawValue, null, 2);
+    explorerBody = `
+      <div class="hint" style="margin-bottom:8px;">"${esc(col.key)}" adalah objek pengaturan tunggal (bukan daftar), diedit langsung sebagai JSON.</div>
+      <textarea id="dev-json-editor" style="width:100%;min-height:300px;font-family:monospace;font-size:12.5px;padding:10px;border:1px solid var(--line);border-radius:8px;">${esc(jsonText)}</textarea>
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        <button class="btn btn-primary" type="button" data-action="devSaveCollection">💾 Simpan Perubahan</button>
+        <button class="btn btn-sm" type="button" data-action="devReloadCollection">↺ Muat Ulang</button>
+      </div>`;
+  }
   return `
-  <div class="note" style="background:#fdecea;border-color:#dc3545;">⚠️ <b>Mode Developer</b> — akses langsung ke database mentah (JSON) dan kustomisasi kode. Kesalahan di sini bisa merusak data atau membuat aplikasi tidak berfungsi. Halaman ini tersembunyi dari semua user termasuk Super Admin — hanya bisa diakses lewat jalur rahasia. Selalu unduh backup (menu Pusat Data) sebelum melakukan perubahan besar di sini. <span class="linklike" data-action="devExit">← Keluar dari Developer Mode</span></div>
+  <div class="note" style="background:#fdecea;border-color:#dc3545;">⚠️ <b>Mode Developer</b> — akses langsung ke database mentah. Kesalahan di sini bisa merusak data atau membuat aplikasi tidak berfungsi. Halaman ini tersembunyi dari semua user termasuk Super Admin — hanya bisa diakses lewat jalur rahasia. Selalu unduh backup (menu Pusat Data) sebelum melakukan perubahan besar di sini. <span class="linklike" data-action="devExit">← Keluar dari Developer Mode</span></div>
 
   <div class="card">
-    <div class="cardhead"><h2>Database Explorer (CRUD Mentah)</h2></div>
+    <div class="cardhead"><h2>Database Explorer (CRUD)</h2></div>
     <div class="field" style="max-width:420px;margin-bottom:12px;"><label>Pilih Koleksi Data</label><select id="dev-collection-select">${collectionOpts}</select></div>
-    <div class="hint" style="margin-bottom:8px;">${Array.isArray(rawValue)? count+' record. ':''}Edit JSON di bawah ini langsung — tambah/ubah/hapus baris sesuai kebutuhan (harus tetap JSON valid), lalu klik Simpan. Untuk field akun (mis. "1000"), pastikan tetap sesuai kode COA yang ada.</div>
-    <textarea id="dev-json-editor" style="width:100%;min-height:360px;font-family:monospace;font-size:12.5px;padding:10px;border:1px solid var(--line);border-radius:8px;">${esc(jsonText)}</textarea>
-    <div style="margin-top:10px;display:flex;gap:8px;">
-      <button class="btn btn-primary" type="button" data-action="devSaveCollection">💾 Simpan Perubahan ke ${esc(col.key)}</button>
-      <button class="btn btn-sm" type="button" data-action="devReloadCollection">↺ Muat Ulang (batalkan draft)</button>
-    </div>
+    ${explorerBody}
   </div>
 
   <div class="card">
@@ -2436,6 +2548,12 @@ function renderDevMode(){
     <div class="field"><label>CSS Tambahan</label><textarea id="dev-custom-css" style="width:100%;min-height:120px;font-family:monospace;font-size:12.5px;padding:10px;border:1px solid var(--line);border-radius:8px;" placeholder="mis. .btn-primary{background:#000;}">${esc(S.meta.devCustomCSS||'')}</textarea></div>
     <div class="field"><label>JavaScript Tambahan (dijalankan setelah aplikasi siap)</label><textarea id="dev-custom-js" style="width:100%;min-height:120px;font-family:monospace;font-size:12.5px;padding:10px;border:1px solid var(--line);border-radius:8px;" placeholder="mis. console.log('custom code aktif')">${esc(S.meta.devCustomJS||'')}</textarea></div>
     <button class="btn btn-primary" type="button" data-action="devSaveCustomCode">💾 Simpan & Terapkan Kode</button>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><h2>Ekspor SQL (Migrasi Database)</h2></div>
+    <div class="note">Mengekspor <b>seluruh data</b> (COA, Jurnal, Penjualan, Pembelian, Barang, Pelanggan, Pemasok, Aset, User, dll) jadi satu file <code>.sql</code> siap-migrasi berisi <code>CREATE TABLE</code> + <code>INSERT</code>. Data bersarang (barang di tiap transaksi Pembelian/Penjualan, baris di tiap Jurnal) otomatis dipecah jadi tabel anak terhubung lewat kolom <code>parent_id</code> — sesuai kaidah database relasional. Kompatibel langsung untuk SQLite; untuk MySQL/PostgreSQL tinggal sesuaikan tipe kolom saat import.</div>
+    <button class="btn btn-primary" type="button" data-action="devExportSql">⬇️ Unduh Ekspor SQL (.sql)</button>
   </div>
 
   <div class="card">
@@ -2665,6 +2783,55 @@ document.addEventListener('click', async (e)=>{
   if(action==='closeModal'){ closeModal(); return; }
   if(action==='gotoOtorisasi'){ closeModal(); S.tab='otorisasi'; S.draft={}; render(); return; }
   if(action==='devReloadCollection'){ S.draft.devJsonDraft=undefined; render(); return; }
+  if(action==='devEditRecord'){
+    const col = DEV_COLLECTIONS.find(c=>c.key===t.dataset.tid);
+    const idx = Number(t.dataset.idx);
+    const record = S[col.prop][idx];
+    showModal(`
+      <h3>Edit Record — ${esc(col.label)} #${idx}</h3>
+      <textarea id="dev-record-editor" style="width:100%;min-height:280px;font-family:monospace;font-size:12.5px;padding:10px;border:1px solid var(--line);border-radius:8px;">${esc(JSON.stringify(record,null,2))}</textarea>
+      <div class="modal-actions">
+        <button class="btn btn-sm" type="button" data-action="closeModal">Batal</button>
+        <button class="btn btn-primary" type="button" data-action="devSaveRecordModal" data-tid="${col.key}" data-idx="${idx}">💾 Simpan</button>
+      </div>`, {large:true});
+    return;
+  }
+  if(action==='devAddRecord'){
+    const col = DEV_COLLECTIONS.find(c=>c.key===t.dataset.tid);
+    showModal(`
+      <h3>Tambah Record Baru — ${esc(col.label)}</h3>
+      <textarea id="dev-record-editor" style="width:100%;min-height:280px;font-family:monospace;font-size:12.5px;padding:10px;border:1px solid var(--line);border-radius:8px;" placeholder='{\n  "id": "...",\n  "field": "nilai"\n}'></textarea>
+      <div class="modal-actions">
+        <button class="btn btn-sm" type="button" data-action="closeModal">Batal</button>
+        <button class="btn btn-primary" type="button" data-action="devSaveRecordModal" data-tid="${col.key}" data-idx="new">💾 Tambah</button>
+      </div>`, {large:true});
+    return;
+  }
+  if(action==='devSaveRecordModal'){
+    if(!devUnlocked){ alert('Akses developer diperlukan.'); return; }
+    const col = DEV_COLLECTIONS.find(c=>c.key===t.dataset.tid);
+    const ta = document.getElementById('dev-record-editor');
+    let parsed;
+    try{ parsed = JSON.parse(ta.value); }
+    catch(err){ alert('JSON tidak valid: '+err.message); return; }
+    if(!confirm('Simpan record ini ke "'+col.key+'"? Ini langsung mengubah database tanpa validasi bisnis normal.')) return;
+    const arr = S[col.prop];
+    if(t.dataset.idx==='new'){ arr.push(parsed); } else { arr[Number(t.dataset.idx)] = parsed; }
+    await saveKey(col.key, arr);
+    closeModal();
+    alert('Tersimpan.');
+    render(); return;
+  }
+  if(action==='devDeleteRecord'){
+    if(!devUnlocked){ alert('Akses developer diperlukan.'); return; }
+    const col = DEV_COLLECTIONS.find(c=>c.key===t.dataset.tid);
+    const idx = Number(t.dataset.idx);
+    const record = S[col.prop][idx];
+    if(!confirm('HAPUS record ini dari "'+col.key+'"?\n\n'+devRecordSummary(record).replace(/<[^>]+>/g,'')+'\n\nTindakan ini permanen dan tidak bisa dibatalkan.')) return;
+    S[col.prop].splice(idx,1);
+    await saveKey(col.key, S[col.prop]);
+    render(); return;
+  }
   if(action==='devExit'){
     devUnlocked = false;
     if(currentUser){ S.tab = firstAllowedTab(currentUser.role); render(); }
@@ -2697,8 +2864,21 @@ document.addEventListener('click', async (e)=>{
     alert('Kode kustom tersimpan & diterapkan.');
     render(); return;
   }
-  if(action==='devDownloadHtml'){
+  if(action==='devExportSql'){
+    if(!devUnlocked){ alert('Akses developer diperlukan.'); return; }
     try{
+      const sqlText = generateSqlExport();
+      const blob = new Blob([sqlText], {type:'application/sql'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const stamp = todayISO();
+      a.href = url; a.download = 'export-database-'+stamp+'.sql';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }catch(err){ alert('Gagal membuat ekspor SQL: '+err.message); }
+    return;
+  }
+  if(action==='devDownloadHtml'){    try{
       const html = '<!DOCTYPE html>\n'+document.documentElement.outerHTML;
       const blob = new Blob([html], {type:'text/html'});
       const url = URL.createObjectURL(blob);
