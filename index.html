@@ -238,7 +238,7 @@ const NAV = [
     ['kartupiutang','Kartu Piutang Rincian','Jurnal & Buku Besar'],['kartuhutang','Kartu Hutang Rincian','Jurnal & Buku Besar'],
     ['pelunasanpiutang','Daftar Pelunasan Piutang','Pelunasan'],['pelunasanhutang','Daftar Pelunasan Hutang','Pelunasan'],
     ['neracasaldo','Neraca Saldo','Laporan Keuangan'],['neracabulan','Neraca Bulan Berjalan','Laporan Keuangan'],['neracaakhir','Neraca Akhir Tahun','Laporan Keuangan'],
-    ['labarugi','Laba Rugi Tahun Berjalan','Laporan Keuangan'],['kumulatif','Laporan Kumulatif','Laporan Keuangan'],['rincian','Rincian Laporan Keuangan','Laporan Keuangan'],
+    ['labarugi','Laba Rugi Tahun Berjalan','Laporan Keuangan'],['labarugibulanan','Laba Rugi Bulanan','Laporan Keuangan'],['kumulatif','Laporan Kumulatif','Laporan Keuangan'],['rincian','Rincian Laporan Keuangan','Laporan Keuangan'],
     ['laporanpenjualan','Laporan Penjualan','Penjualan & Pembelian'],['laporanpembelian','Laporan Pembelian','Penjualan & Pembelian'],['perbandingan','Perbandingan Laporan (Super Admin)','Penjualan & Pembelian']
   ]},
   {group:'Print', items:[['print-invoice','Print Invoice']]},
@@ -866,7 +866,7 @@ function render(){
     hutangpiutang:renderHutangPiutang, kasbank:renderKasBank, biaya:renderBiaya,
     jurnal:renderJurnal, bukubesar:renderBukuBesar, bukubesarpiutang:renderBBPiutang, bukubesarhutang:renderBBHutang,
     neracasaldo:renderNeracaSaldo, neracabulan:()=>renderNeracaPeriode('bulan'), neracaakhir:()=>renderNeracaPeriode('tahun'),
-    labarugi:renderLabaRugi, kumulatif:renderKumulatif, rincian:renderRincian, laporanpenjualan:renderLaporanPenjualan,
+    labarugi:renderLabaRugi, labarugibulanan:renderLabaRugiBulanan, kumulatif:renderKumulatif, rincian:renderRincian, laporanpenjualan:renderLaporanPenjualan,
     laporanpembelian:renderLaporanPembelian, perbandingan:renderPerbandingan,
     kartupiutang:()=>renderKartuRincian('piutang'), kartuhutang:()=>renderKartuRincian('hutang'),
     pelunasanpiutang:()=>renderPelunasan('piutang'), pelunasanhutang:()=>renderPelunasan('hutang'),
@@ -1059,7 +1059,8 @@ function renderSetupPemasok(){
       <div class="field"><label>Contact Person</label><input type="text" name="kontak" value="${v('kontak')}"></div>
       <div class="field"><label>Keterangan</label><input type="text" name="keterangan" value="${v('keterangan')}"></div>
       <div class="field"><label>Termin (hari)</label><input type="number" name="termHari" value="${editV?editV.termHari||0:0}"></div>
-      ${editV? '' : `<div class="field"><label>Saldo Awal Hutang</label><input type="text" inputmode="numeric" class="moneyfmt" name="saldoAwal" value=""></div>`}
+      <div class="field"><label>Saldo Awal Hutang</label><input type="text" inputmode="numeric" class="moneyfmt" name="saldoAwal" value="${fmtInputNumber(editV?(editV.saldoAwal||0):0)}"></div>
+      ${editV?`<div class="hint">Mengubah nilai ini akan mengganti ulang jurnal pembuka hutang pemasok ini secara otomatis.</div>`:''}
       <div class="field" style="grid-column:1/-1">
         <button class="btn btn-primary" type="submit">${editV?'Update Pemasok':'Tambah Pemasok'}</button>
         ${editV?`<button class="btn btn-sm" type="button" data-action="cancelEdit" data-id="vendor">Batal</button>`:''}
@@ -1831,6 +1832,41 @@ function renderLabaRugi(){
   </div>`;
 }
 
+/* ============================= LAPORAN: LABA RUGI BULANAN ============================= */
+function renderLabaRugiBulanan(){
+  const today = todayISO();
+  const y = S.draft.lrbTahun || Number(today.slice(0,4));
+  const m = S.draft.lrbBulan || Number(today.slice(5,7));
+  const start = y+'-'+String(m).padStart(2,'0')+'-01';
+  const endOfMonth = new Date(y,m,0).toISOString().slice(0,10);
+  const end = endOfMonth<today? endOfMonth : today;
+  const lr = labaRugi(start,end);
+  const pendGroups = groupByKelompok(lr.detailPendapatan);
+  const hppGroups = groupByKelompok(lr.detailHpp);
+  const bebanGroups = groupByKelompok(lr.detailBeban);
+  const monthOpts = MONTH_NAMES.map((mn,i)=>`<option value="${i+1}" ${m===i+1?'selected':''}>${mn}</option>`).join('');
+  return `
+  <div class="card"><div class="cardhead"><h2>Pilih Periode</h2></div>
+    <div class="row" style="max-width:320px">
+      <div class="field"><label>Bulan</label><select id="lrb-bulan">${monthOpts}</select></div>
+      <div class="field"><label>Tahun</label><input type="number" id="lrb-tahun" value="${y}"></div>
+    </div>
+  </div>
+  <div class="card"><div class="cardhead"><h2>Laba Rugi Bulan ${MONTH_NAMES[m-1]} ${y} (${fmtDate(start)} — ${fmtDate(end)}) — Diklasifikasikan</h2>${toolbarHtml('labarugibulanan')}</div>
+    <table><tbody>
+    <tr class="grp-h"><td colspan="2">PENDAPATAN</td></tr>
+    ${renderKelompokRows(pendGroups)}
+    <tr class="totalrow"><td>Total Pendapatan</td><td class="num">${fmtRp(lr.pendapatan)}</td></tr>
+    <tr class="grp-h"><td colspan="2">HARGA POKOK PENJUALAN</td></tr>
+    ${renderKelompokRows(hppGroups)}
+    <tr class="totalrow"><td>Laba Kotor</td><td class="num">${fmtRp(lr.labaKotor)}</td></tr>
+    <tr class="grp-h"><td colspan="2">BEBAN OPERASIONAL</td></tr>
+    ${renderKelompokRows(bebanGroups)}
+    <tr class="totalrow"><td>Laba Bersih</td><td class="num">${fmtRp(lr.labaBersih)}</td></tr>
+    </tbody></table>
+  </div>`;
+}
+
 /* ============================= LAPORAN: KUMULATIF ============================= */
 function renderKumulatif(){
   const y = S.draft.kumTahun || new Date().getFullYear();
@@ -2263,6 +2299,22 @@ function getExportData(key){
     groupByKelompok(lr.detailBeban).forEach(grp=>{ body.push([grp.kelompok,'']); grp.items.forEach(a=>body.push([a.name, fmtRp(a.bal)])); body.push(['Subtotal '+grp.kelompok, fmtRp(grp.items.reduce((s,a)=>s+a.bal,0))]); });
     body.push(['Laba Bersih', fmtRp(lr.labaBersih)]);
     return {title:'Laba Rugi Tahun Berjalan (Diklasifikasikan)', head:['Uraian','Jumlah'], body, opts:{filename:'laba-rugi', subtitle:fmtDate(start)+' - '+fmtDate(end)}};
+  }
+  if(key==='labarugibulanan'){
+    const y=S.draft.lrbTahun||Number(today.slice(0,4)); const m=S.draft.lrbBulan||Number(today.slice(5,7));
+    const start=y+'-'+String(m).padStart(2,'0')+'-01'; const endOfMonth=new Date(y,m,0).toISOString().slice(0,10); const end=endOfMonth<today?endOfMonth:today;
+    const lr = labaRugi(start,end);
+    const body=[];
+    body.push(['Pendapatan','']);
+    groupByKelompok(lr.detailPendapatan).forEach(grp=>{ body.push([grp.kelompok,'']); grp.items.forEach(a=>body.push([a.name, fmtRp(a.bal)])); body.push(['Subtotal '+grp.kelompok, fmtRp(grp.items.reduce((s,a)=>s+a.bal,0))]); });
+    body.push(['Total Pendapatan', fmtRp(lr.pendapatan)]);
+    body.push(['HPP','']);
+    groupByKelompok(lr.detailHpp).forEach(grp=>{ body.push([grp.kelompok,'']); grp.items.forEach(a=>body.push([a.name, fmtRp(a.bal)])); body.push(['Subtotal '+grp.kelompok, fmtRp(grp.items.reduce((s,a)=>s+a.bal,0))]); });
+    body.push(['Laba Kotor', fmtRp(lr.labaKotor)]);
+    body.push(['Beban','']);
+    groupByKelompok(lr.detailBeban).forEach(grp=>{ body.push([grp.kelompok,'']); grp.items.forEach(a=>body.push([a.name, fmtRp(a.bal)])); body.push(['Subtotal '+grp.kelompok, fmtRp(grp.items.reduce((s,a)=>s+a.bal,0))]); });
+    body.push(['Laba Bersih', fmtRp(lr.labaBersih)]);
+    return {title:'Laba Rugi Bulan '+MONTH_NAMES[m-1]+' '+y+' (Diklasifikasikan)', head:['Uraian','Jumlah'], body, opts:{filename:'laba-rugi-bulanan-'+y+'-'+String(m).padStart(2,'0'), subtitle:fmtDate(start)+' - '+fmtDate(end)}};
   }
   if(key==='kumulatif'){
     const y=S.draft.kumTahun||new Date().getFullYear(); const curMonth=(today.slice(0,4)==String(y))?Number(today.slice(5,7)):12;
@@ -3129,6 +3181,8 @@ document.addEventListener('change', (e)=>{
   if(sel.id==='ns-end'){ S.draft.nsEnd=sel.value; render(); return; }
   if(sel.id==='na-tahun'){ S.draft.naTahun=Number(sel.value); render(); return; }
   if(sel.id==='lr-tahun'){ S.draft.lrTahun=Number(sel.value); render(); return; }
+  if(sel.id==='lrb-tahun'){ S.draft.lrbTahun=Number(sel.value); render(); return; }
+  if(sel.id==='lrb-bulan'){ S.draft.lrbBulan=Number(sel.value); render(); return; }
   if(sel.id==='kum-tahun'){ S.draft.kumTahun=Number(sel.value); render(); return; }
   if(sel.id==='rinc-end'){ S.draft.rincEnd=sel.value; render(); return; }
   if(sel.id==='pel-start'){ S.draft.pelStart=sel.value; render(); return; }
@@ -3419,7 +3473,29 @@ document.addEventListener('submit', async (e)=>{
     const editingId = S.draft.editing && S.draft.editing.vendor;
     if(editingId){
       const vv = S.vendors.find(x=>x.id===editingId);
-      if(vv){ Object.assign(vv, fields); await saveKey('vendors',S.vendors); }
+      if(vv){
+        const newSaldoAwal = Number(fd.get('saldoAwal')||0);
+        const oldSaldoAwal = vv.saldoAwal||0;
+        const oldRecord = S.purchases.find(p=>p.sumber==='saldo-awal' && p.vendorId===editingId);
+        if(newSaldoAwal!==oldSaldoAwal){
+          if(oldRecord && oldRecord.dibayar>0){
+            if(!confirm('Saldo awal hutang pemasok ini sudah pernah dibayar sebagian ('+fmtRp(oldRecord.dibayar)+'). Mengubah nilainya akan menghapus riwayat saldo awal lama dan menggantinya dengan yang baru (riwayat pembayaran sebagian tersebut tidak akan terhubung lagi ke saldo awal baru). Lanjutkan?')) return;
+          }
+          if(isPeriodClosed(todayISO())){ alert('Tidak bisa mengubah saldo awal: periode berjalan sudah ditutup buku.'); return; }
+          S.purchases = S.purchases.filter(p=>!(p.sumber==='saldo-awal' && p.vendorId===editingId));
+          S.journal = S.journal.filter(e=>!(e.sumber==='saldo-awal' && e.vendorId===editingId));
+          await saveKey('purchases', S.purchases);
+          await saveKey('journal', S.journal);
+          if(newSaldoAwal>0){
+            S.purchases.push({id:uid(), tanggal:todayISO(), noFaktur:'SALDO-AWAL-'+vv.kode, vendorId:vv.id, vendorNama:nama, metode:'Hutang', subtotal:newSaldoAwal, ppn:0, total:newSaldoAwal, dibayar:0, items:[], sumber:'saldo-awal'});
+            await saveKey('purchases', S.purchases);
+            await postJournal({tanggal:todayISO(),keterangan:'Saldo awal hutang - '+nama,sumber:'saldo-awal',vendorId:vv.id,lines:[{akun:'3900',debit:newSaldoAwal,credit:0},{akun:'2000',debit:0,credit:newSaldoAwal}]});
+          }
+          vv.saldoAwal = newSaldoAwal;
+        }
+        Object.assign(vv, fields);
+        await saveKey('vendors',S.vendors);
+      }
       S.draft.editing.vendor=null; render(); return;
     }
     const kode=fd.get('kode').trim(), saldoAwal=Number(fd.get('saldoAwal')||0);
