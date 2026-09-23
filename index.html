@@ -77,6 +77,14 @@
   .pager button{padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;cursor:pointer;font-size:12.5px;}
   .pager button:disabled{opacity:.4;cursor:default;}
   .pager span{font-size:12.5px;color:var(--sub);white-space:nowrap;}
+  /* ============================= COMBOBOX: dropdown bisa diketik ============================= */
+  .combo-wrap{position:relative;}
+  .combo-input{width:100%;box-sizing:border-box;}
+  .combo-list{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:6px;max-height:240px;overflow-y:auto;z-index:80;box-shadow:0 8px 24px rgba(0,0,0,.15);display:none;margin-top:2px;}
+  .combo-list.open{display:block;}
+  .combo-item{padding:8px 10px;cursor:pointer;font-size:13px;}
+  .combo-item:hover,.combo-item.active{background:rgba(18,150,126,.1);}
+  .combo-empty{padding:8px 10px;color:var(--sub);font-size:12.5px;}
   .modal-backdrop{position:fixed;inset:0;background:rgba(15,23,32,.55);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
   .modal-box{background:#fff;border-radius:12px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
   .modal-box h3{margin:0 0 10px;font-size:16px;}
@@ -780,7 +788,30 @@ function renderKelompokRows(groups, indent){
       <tr style="font-weight:600;border-top:1px solid #ddd"><td${indent?' style="padding-left:18px"':''}>Subtotal ${esc(grp.kelompok)}</td><td class="num">${fmtRp(subtotal)}</td></tr>`;
   }).join('');
 }
-/* ============================= TABEL: PENCARIAN + PAGINASI (50 baris/halaman) ============================= */
+/* ============================= COMBOBOX: dropdown bisa diketik (pengganti select untuk daftar panjang) ============================= */
+let COMBO_REGISTRY = {}; let comboIdCounter = 0;
+// options: [{value,label}]. attrsStr: atribut mentah utk input hidden (name="x" ATAU data-si="itemId" data-i="0").
+function comboHtml(options, selectedValue, attrsStr, placeholder){
+  const id = 'cb'+(comboIdCounter++);
+  COMBO_REGISTRY[id] = options;
+  const selected = options.find(o=>String(o.value)===String(selectedValue||''));
+  return `<div class="combo-wrap" data-combo-id="${id}">
+    <input type="text" class="combo-input" autocomplete="off" placeholder="${esc(placeholder||'Ketik untuk cari…')}" value="${selected?esc(selected.label):''}">
+    <input type="hidden" class="combo-hidden" ${attrsStr||''} value="${selected?esc(String(selected.value)):''}">
+    <div class="combo-list"></div>
+  </div>`;
+}
+function renderComboList(wrap, matches){
+  const list = wrap.querySelector('.combo-list');
+  if(!list) return;
+  list.innerHTML = matches.length ? matches.map(o=>`<div class="combo-item" data-value="${esc(String(o.value))}">${esc(o.label)}</div>`).join('') : `<div class="combo-empty">Tidak ditemukan</div>`;
+  list.classList.add('open');
+}
+function comboFilter(wrap, query){
+  const options = COMBO_REGISTRY[wrap.dataset.comboId] || [];
+  const q = (query||'').toLowerCase().trim();
+  return q ? options.filter(o=>o.label.toLowerCase().includes(q)) : options;
+}
 const TABLE_PAGE_SIZE = 50;
 function tableState(id){
   if(!S.draft.tableUI) S.draft.tableUI = {};
@@ -856,6 +887,7 @@ function firstAllowedTab(role){
   return 'dashboard';
 }
 function render(){
+  COMBO_REGISTRY = {}; comboIdCounter = 0;
   if(S.tab==='devmode' && !devUnlocked){ S.tab = currentUser? firstAllowedTab(currentUser.role) : 'dashboard'; }
   if(currentUser && S.tab!=='devmode' && !tabAllowed(S.tab, currentUser.role)){ S.tab = firstAllowedTab(currentUser.role); }
   if(currentUser && S.tab!=='devmode'){ try{ sessionStorage.setItem('hjs_session', JSON.stringify({user:currentUser, tab:S.tab})); }catch(err){} }
@@ -995,7 +1027,7 @@ function renderSetupPelanggan(){
   const rows = res.pageItems.map(c=>{
     const sisa = S.sales.filter(s=>s.customerId===c.id && s.status==='approved').reduce((s,x)=>s+(x.total-x.dibayar),0);
     return `<tr><td>${esc(c.kode)}</td><td>${esc(c.nama)}</td><td>${esc(c.kota||'')}</td><td>${esc(c.telp1||'')}</td><td>${esc(c.npwp)}</td><td class="num">${c.termHari||0} hr</td><td class="num">${fmtRp(sisa)}</td>
-      <td><span class="linklike" data-action="editCustomer" data-id="${c.id}">Edit</span> · <span class="linklike" data-action="deleteCustomer" data-id="${c.id}">Hapus</span></td></tr>`;
+      <td><span class="linklike" data-action="viewCustomer" data-id="${c.id}">Lihat</span> · <span class="linklike" data-action="editCustomer" data-id="${c.id}">Edit</span> · <span class="linklike" data-action="deleteCustomer" data-id="${c.id}">Hapus</span></td></tr>`;
   }).join('');
   const v = (f)=> editC? esc(editC[f]||'') : '';
   return `
@@ -1037,7 +1069,7 @@ function renderSetupPemasok(){
   const rows = res.pageItems.map(vd=>{
     const sisa = S.purchases.filter(p=>p.vendorId===vd.id).reduce((s,x)=>s+(x.total-x.dibayar),0);
     return `<tr><td>${esc(vd.kode)}</td><td>${esc(vd.nama)}</td><td>${esc(vd.kota||'')}</td><td>${esc(vd.telp1||'')}</td><td>${esc(vd.npwp)}</td><td class="num">${vd.termHari||0} hr</td><td class="num">${fmtRp(sisa)}</td>
-      <td><span class="linklike" data-action="editVendor" data-id="${vd.id}">Edit</span> · <span class="linklike" data-action="deleteVendor" data-id="${vd.id}">Hapus</span></td></tr>`;
+      <td><span class="linklike" data-action="viewVendor" data-id="${vd.id}">Lihat</span> · <span class="linklike" data-action="editVendor" data-id="${vd.id}">Edit</span> · <span class="linklike" data-action="deleteVendor" data-id="${vd.id}">Hapus</span></td></tr>`;
   }).join('');
   const v = (f)=> editV? esc(editV[f]||'') : '';
   return `
@@ -1084,7 +1116,7 @@ function renderSetupBarang(){
     return `<tr${low?' style="background:#fff3cd"':''}><td>${esc(it.kode)}</td><td>${esc(it.nama)}${low?' ⚠️':''}</td><td>${esc(it.satuan)}</td><td>${esc(acc(it.akunPenjualan)?acc(it.akunPenjualan).name:it.akunPenjualan)}</td><td class="num">${it.stok}</td><td class="num">${it.stokMin||0}</td><td class="num">${fmtRp(it.hpp)}</td><td class="num">${fmtRp(it.hargaJual||0)}</td><td class="num">${fmtRp(it.stok*it.hpp)}</td>
     <td><span class="linklike" data-action="editItem" data-id="${it.id}">Edit</span> · <span class="linklike" data-action="deleteItem" data-id="${it.id}">Hapus</span></td></tr>`;
   }).join('');
-  const pendOpts = S.coa.filter(a=>a.type==='PENDAPATAN' && a.kelompok==='Penjualan').map(a=>`<option value="${a.code}" ${editI&&editI.akunPenjualan===a.code?'selected':''}>${a.code} — ${esc(a.name)}</option>`).join('');
+  const pendComboOpts = S.coa.filter(a=>a.type==='PENDAPATAN' && a.kelompok==='Penjualan').map(a=>({value:a.code, label:a.code+' — '+a.name}));
   return `
   <div class="note">Tahap 6 Setup: Daftar Barang. "Akun Penjualan" menentukan akun pendapatan saat barang ini terjual. "Harga Jual" adalah harga sebelum PPN yang otomatis terisi saat memilih barang di form Penjualan (masih bisa diubah manual per transaksi). Stok &amp; HPP awal membentuk saldo awal Persediaan (akun 1200). <b>Kalau HPP Awal dibiarkan 0, sistem otomatis menghitung HPP dari harga pembelian pertama barang ini (dan terus diperbarui rata-rata tertimbang setiap ada pembelian baru).</b></div>
   <details class="card-collapse" ${editI?'open':''}>
@@ -1094,7 +1126,7 @@ function renderSetupBarang(){
       <div class="field"><label>Kode Barang</label><input type="text" name="kode" required value="${editI?esc(editI.kode):''}" ${editI?'readonly':''}></div>
       <div class="field"><label>Nama Barang</label><input type="text" name="nama" required value="${editI?esc(editI.nama):''}"></div>
       <div class="field"><label>Satuan</label><input type="text" name="satuan" value="${editI?esc(editI.satuan):'pcs'}" required></div>
-      <div class="field"><label>Akun Penjualan</label><select name="akunPenjualan">${pendOpts}</select></div>
+      <div class="field"><label>Akun Penjualan</label>${comboHtml(pendComboOpts, editI?editI.akunPenjualan:'', 'name="akunPenjualan"', 'Cari akun…')}</div>
       <div class="field"><label>HPP ${editI?'(saat ini)':'Awal'} / Satuan</label><input type="text" inputmode="numeric" class="moneyfmt" name="hppAwal" value="${fmtInputNumber(editI?editI.hpp:0)}"></div>
       <div class="field"><label>Harga Jual / Satuan (sebelum PPN)</label><input type="text" inputmode="numeric" class="moneyfmt" name="hargaJual" value="${fmtInputNumber(editI?(editI.hargaJual||0):0)}"></div>
       <div class="field"><label>Stok Minimum (reminder)</label><input type="number" name="stokMin" value="${editI?(editI.stokMin||0):0}"></div>
@@ -1231,11 +1263,11 @@ function renderPembelian(){
   const H = (S.draft.formHeaders && S.draft.formHeaders['form-pembelian']) || {};
   const hMetode = H.metode || 'Cash';
   const bankOpts = bankAccountsList().map((a,i)=>`<option value="${a.code}" ${(H.bankAkun?H.bankAkun===a.code:i===0)?'selected':''}>${a.code} — ${esc(a.name)}</option>`).join('');
-  const itemOptions = id=>S.items.map(it=>`<option value="${it.id}" ${id===it.id?'selected':''}>${it.kode} — ${it.nama} (stok ${it.stok})</option>`).join('');
+  const itemComboOpts = S.items.map(it=>({value:it.id, label:it.kode+' — '+it.nama+' (stok '+it.stok+')'}));
   const linesHtml = S.draft.purchaseItems.map((l,i)=>{
     const nominal = Math.round((l.qty||0)*(l.harga||0)*(1-(l.diskon||0)/100));
     return `<tr>
-    <td><select data-pi="itemId" data-i="${i}"><option value="">Pilih barang…</option>${itemOptions(l.itemId)}</select></td>
+    <td>${comboHtml(itemComboOpts, l.itemId, 'data-pi="itemId" data-i="'+i+'"', 'Cari barang…')}</td>
     <td><input type="text" data-pi="noBatch" data-i="${i}" value="${esc(l.noBatch||'')}" placeholder="No.Batch" style="width:90px"></td>
     <td><input type="date" data-pi="tglEd" data-i="${i}" value="${l.tglEd||''}" style="width:130px"></td>
     <td><input type="number" data-pi="qty" data-i="${i}" value="${l.qty}" style="width:55px"></td>
@@ -1260,7 +1292,7 @@ function renderPembelian(){
     <form id="form-pembelian">
       <div class="grid4">
         <div class="field"><label>Tanggal</label><input type="date" name="tanggal" value="${H.tanggal||todayISO()}" required></div>
-        <div class="field" style="flex:2"><label>Pemasok</label><select name="vendorId"><option value="">Umum</option>${S.vendors.map(v=>`<option value="${v.id}" ${H.vendorId===v.id?'selected':''}>${esc(v.kode)} — ${esc(v.nama)}</option>`).join('')}</select></div>
+        <div class="field" style="flex:2"><label>Pemasok</label>${comboHtml([{value:'',label:'Umum'}, ...S.vendors.map(v=>({value:v.id,label:v.kode+' — '+v.nama}))], H.vendorId||'', 'name="vendorId"', 'Cari pemasok…')}</div>
         <div class="field"><label>Metode Bayar</label><select name="metode">
           <option value="Cash" ${hMetode==='Cash'?'selected':''}>Cash (Kas)</option>
           <option value="PettyCash" ${hMetode==='PettyCash'?'selected':''}>Petty Cash</option>
@@ -1293,11 +1325,11 @@ function renderPenjualan(){
   const H = (S.draft.formHeaders && S.draft.formHeaders['form-penjualan']) || {};
   const hMetode = H.metode || 'Cash';
   const bankOpts = bankAccountsList().map((a,i)=>`<option value="${a.code}" ${(H.bankAkun?H.bankAkun===a.code:i===0)?'selected':''}>${a.code} — ${esc(a.name)}</option>`).join('');
-  const itemOptions = id=>S.items.map(it=>`<option value="${it.id}" ${id===it.id?'selected':''}>${it.kode} — ${it.nama} (stok ${it.stok})</option>`).join('');
+  const itemComboOpts = S.items.map(it=>({value:it.id, label:it.kode+' — '+it.nama+' (stok '+it.stok+')'}));
   const linesHtml = S.draft.saleItems.map((l,i)=>{
     const nominal = Math.round((l.qty||0)*(l.harga||0)*(1-(l.diskon||0)/100));
     return `<tr>
-    <td><select data-si="itemId" data-i="${i}"><option value="">Pilih barang…</option>${itemOptions(l.itemId)}</select></td>
+    <td>${comboHtml(itemComboOpts, l.itemId, 'data-si="itemId" data-i="'+i+'"', 'Cari barang…')}</td>
     <td><input type="text" data-si="noBatch" data-i="${i}" value="${esc(l.noBatch||'')}" placeholder="No.Batch" style="width:90px"></td>
     <td><input type="date" data-si="tglEd" data-i="${i}" value="${l.tglEd||''}" style="width:130px"></td>
     <td><input type="number" data-si="qty" data-i="${i}" value="${l.qty}" style="width:55px"></td>
@@ -1324,7 +1356,7 @@ function renderPenjualan(){
     <form id="form-penjualan">
       <div class="grid4">
         <div class="field"><label>Tanggal</label><input type="date" name="tanggal" value="${H.tanggal||todayISO()}" required></div>
-        <div class="field" style="flex:2"><label>Konsumen</label><select name="customerId"><option value="">Umum</option>${S.customers.map(c=>`<option value="${c.id}" ${H.customerId===c.id?'selected':''}>${esc(c.kode)} — ${esc(c.nama)}</option>`).join('')}</select></div>
+        <div class="field" style="flex:2"><label>Konsumen</label>${comboHtml([{value:'',label:'Umum'}, ...S.customers.map(c=>({value:c.id,label:c.kode+' — '+c.nama}))], H.customerId||'', 'name="customerId"', 'Cari konsumen…')}</div>
         <div class="field"><label>Metode Bayar</label><select name="metode">
           <option value="Cash" ${hMetode==='Cash'?'selected':''}>Cash (Kas)</option>
           <option value="Bank" ${hMetode==='Bank'?'selected':''}>Bank</option>
@@ -1388,8 +1420,8 @@ function renderStock(){
 /* ============================= PENCATATAN: HUTANG PIUTANG ============================= */
 function renderHutangPiutang(){
   const sub = S.draft.hpTab || 'piutang';
-  const custOptions = S.customers.map(c=>`<option value="${c.id}">${esc(c.kode)} — ${esc(c.nama)}</option>`).join('');
-  const vendOptions = S.vendors.map(v=>`<option value="${v.id}">${esc(v.kode)} — ${esc(v.nama)}</option>`).join('');
+  const custComboOpts = S.customers.map(c=>({value:c.id, label:c.kode+' — '+c.nama}));
+  const vendComboOpts = S.vendors.map(v=>({value:v.id, label:v.kode+' — '+v.nama}));
   let body='';
   if(sub==='piutang'){
     const custSel = S.draft.hpCustomer || '';
@@ -1401,7 +1433,7 @@ function renderHutangPiutang(){
     body = `
     <div class="card"><div class="cardhead"><h2>Terima Pembayaran Piutang</h2></div>
       <form id="form-bayar-piutang" class="grid4">
-        <div class="field"><label>Pelanggan</label><select name="customerId" id="hp-cust-select">${custOptions}</select></div>
+        <div class="field"><label>Pelanggan</label>${comboHtml(custComboOpts, custSel, 'name="customerId" id="hp-cust-select"', 'Cari pelanggan…')}</div>
         <div class="field" style="flex:2"><label>Invoice</label><select name="invoiceId">${invOpts||'<option value="">Tidak ada tagihan terbuka</option>'}</select></div>
         <div class="field"><label>Tanggal</label><input type="date" name="tanggal" value="${todayISO()}" required></div>
         <div class="field"><label>Sumber Dana</label><select name="akunKas"><option value="1000">Kas</option><option value="1010">Bank</option>${dpOpts}</select></div>
@@ -1422,7 +1454,7 @@ function renderHutangPiutang(){
     body = `
     <div class="card"><div class="cardhead"><h2>Bayar Hutang</h2></div>
       <form id="form-bayar-hutang" class="grid4">
-        <div class="field"><label>Pemasok</label><select name="vendorId" id="hp-vend-select">${vendOptions}</select></div>
+        <div class="field"><label>Pemasok</label>${comboHtml(vendComboOpts, vendSel, 'name="vendorId" id="hp-vend-select"', 'Cari pemasok…')}</div>
         <div class="field" style="flex:2"><label>Invoice</label><select name="invoiceId">${poOpts||'<option value="">Tidak ada tagihan terbuka</option>'}</select></div>
         <div class="field"><label>Tanggal</label><input type="date" name="tanggal" value="${todayISO()}" required></div>
         <div class="field"><label>Sumber Dana</label><select name="akunKas"><option value="1000">Kas</option><option value="1010">Bank</option>${dpOptsV}</select></div>
@@ -1482,7 +1514,7 @@ function renderBiaya(){
   const H = (S.draft.formHeaders && S.draft.formHeaders['form-biaya']) || {};
   const hMetode = H.metode || 'Cash';
   const bankOpts = bankAccountsList().map((a,i)=>`<option value="${a.code}" ${(H.bankAkun?H.bankAkun===a.code:i===0)?'selected':''}>${a.code} — ${esc(a.name)}</option>`).join('');
-  const bebanOptions = S.coa.filter(a=>a.type==='BEBAN').map(a=>`<option value="${a.code}" ${H.akunBeban===a.code?'selected':''}>${a.code} — ${esc(a.name)}</option>`).join('');
+  const bebanComboOpts = S.coa.filter(a=>a.type==='BEBAN').map(a=>({value:a.code, label:a.code+' — '+a.name}));
   const rows = S.journal.filter(e=>e.sumber==='biaya').slice().reverse().slice(0,25).map(e=>{
     const debitLine = e.lines.find(l=>l.debit>0);
     return `<tr><td>${fmtDate(e.tanggal)}</td><td>${esc(e.keterangan)}</td><td>${debitLine?esc(acc(debitLine.akun)?acc(debitLine.akun).name:debitLine.akun):''}</td><td class="num">${fmtRp(debitLine?debitLine.debit:0)}</td></tr>`;
@@ -1492,7 +1524,7 @@ function renderBiaya(){
     <div class="cardhead"><h2>Catat Biaya</h2></div>
     <form id="form-biaya" class="grid4">
       <div class="field"><label>Tanggal</label><input type="date" name="tanggal" value="${H.tanggal||todayISO()}" required></div>
-      <div class="field" style="flex:2"><label>Akun Beban</label><select name="akunBeban">${bebanOptions}</select></div>
+      <div class="field" style="flex:2"><label>Akun Beban</label>${comboHtml(bebanComboOpts, H.akunBeban||'', 'name="akunBeban"', 'Cari akun beban…')}</div>
       <div class="field"><label>Jumlah</label><input type="text" inputmode="numeric" class="moneyfmt" name="jumlah" value="${H.jumlah||''}" required></div>
       <div class="field"><label>Metode Bayar</label><select name="metode">
         <option value="Cash" ${hMetode==='Cash'?'selected':''}>Cash (Kas)</option>
@@ -1512,8 +1544,8 @@ function renderBiaya(){
 /* ============================= PENCATATAN: UANG MUKA ============================= */
 function renderUangMuka(){
   const sub = S.draft.dpTab || 'terima';
-  const custOptions = S.customers.map(c=>`<option value="${c.id}">${esc(c.kode)} — ${esc(c.nama)}</option>`).join('');
-  const vendOptions = S.vendors.map(v=>`<option value="${v.id}">${esc(v.kode)} — ${esc(v.nama)}</option>`).join('');
+  const custComboOpts = S.customers.map(c=>({value:c.id, label:c.kode+' — '+c.nama}));
+  const vendComboOpts = S.vendors.map(v=>({value:v.id, label:v.kode+' — '+v.nama}));
   let body='';
   if(sub==='terima'){
     const rows = S.dpReceived.slice().reverse().map(d=>`<tr><td>${fmtDate(d.tanggal)}</td><td>${esc(custName(d.customerId))}</td><td>${esc(d.keterangan||'')}</td><td class="num">${fmtRp(d.jumlah)}</td><td class="num">${fmtRp(d.terpakai)}</td><td class="num">${fmtRp(d.jumlah-d.terpakai)}</td></tr>`).join('');
@@ -1521,7 +1553,7 @@ function renderUangMuka(){
     <div class="card"><div class="cardhead"><h2>Terima Uang Muka dari Pelanggan</h2></div>
       <form id="form-dp-terima" class="grid4">
         <div class="field"><label>Tanggal</label><input type="date" name="tanggal" value="${todayISO()}" required></div>
-        <div class="field" style="flex:2"><label>Pelanggan</label><select name="customerId" required><option value="">Pilih pelanggan…</option>${custOptions}</select></div>
+        <div class="field" style="flex:2"><label>Pelanggan</label>${comboHtml(custComboOpts, '', 'name="customerId" required', 'Cari pelanggan…')}</div>
         <div class="field"><label>Akun Penerimaan</label><select name="akunKas"><option value="1000">Kas</option><option value="1010">Bank</option></select></div>
         <div class="field"><label>Jumlah</label><input type="text" inputmode="numeric" class="moneyfmt" name="jumlah" required></div>
         <div class="field" style="grid-column:1/-1"><label>Keterangan</label><input type="text" name="keterangan" placeholder="mis. DP pesanan alat kesehatan"></div>
@@ -1537,7 +1569,7 @@ function renderUangMuka(){
     <div class="card"><div class="cardhead"><h2>Bayar Uang Muka ke Pemasok</h2></div>
       <form id="form-dp-bayar" class="grid4">
         <div class="field"><label>Tanggal</label><input type="date" name="tanggal" value="${todayISO()}" required></div>
-        <div class="field" style="flex:2"><label>Pemasok</label><select name="vendorId" required><option value="">Pilih pemasok…</option>${vendOptions}</select></div>
+        <div class="field" style="flex:2"><label>Pemasok</label>${comboHtml(vendComboOpts, '', 'name="vendorId" required', 'Cari pemasok…')}</div>
         <div class="field"><label>Akun Pembayaran</label><select name="akunKas"><option value="1000">Kas</option><option value="1010">Bank</option></select></div>
         <div class="field"><label>Jumlah</label><input type="text" inputmode="numeric" class="moneyfmt" name="jumlah" required></div>
         <div class="field" style="grid-column:1/-1"><label>Keterangan</label><input type="text" name="keterangan" placeholder="mis. DP pemesanan barang"></div>
@@ -1618,9 +1650,10 @@ function renderRetur(){
 function renderJurnal(){
   if(!S.draft.journalLines) S.draft.journalLines=[{akun:'',debit:'',credit:''},{akun:'',debit:'',credit:''}];
   const lines = S.draft.journalLines;
+  const coaComboOpts = S.coa.map(a=>({value:a.code, label:a.code+' — '+a.name}));
   const linesHtml = lines.map((l,i)=>`
     <tr>
-      <td><select data-jl="akun" data-i="${i}"><option value="">Pilih akun…</option>${S.coa.map(a=>`<option value="${a.code}" ${l.akun===a.code?'selected':''}>${a.code} — ${esc(a.name)}</option>`).join('')}</select></td>
+      <td>${comboHtml(coaComboOpts, l.akun, 'data-jl="akun" data-i="'+i+'"', 'Cari akun…')}</td>
       <td><input type="text" inputmode="numeric" class="moneyfmt" data-jl="debit" data-i="${i}" value="${fmtInputNumber(l.debit)}" placeholder="0"></td>
       <td><input type="text" inputmode="numeric" class="moneyfmt" data-jl="credit" data-i="${i}" value="${fmtInputNumber(l.credit)}" placeholder="0"></td>
       <td><span class="linklike" data-action="removeJurnalLine" data-id="${i}">Hapus</span></td>
@@ -1669,7 +1702,7 @@ function renderBukuBesar(){
   const rows = lines.map(l=>{ running += NORMAL_DEBIT[a.type]? (l.debit-l.credit):(l.credit-l.debit); return `<tr><td>${fmtDate(l.date)}</td><td>${esc(l.no)}</td><td>${esc(l.ket)}</td><td class="num">${l.debit?fmtRp(l.debit):''}</td><td class="num">${l.credit?fmtRp(l.credit):''}</td><td class="num">${fmtRp(running)}</td></tr>`; }).join('');
   return `
   <div class="card"><div class="cardhead"><h2>Pilih Akun</h2></div>
-    <select id="bb-select" style="max-width:340px">${S.coa.map(x=>`<option value="${x.code}" ${x.code===sel?'selected':''}>${x.code} — ${esc(x.name)}</option>`).join('')}</select>
+    <div style="max-width:340px">${comboHtml(S.coa.map(x=>({value:x.code,label:x.code+' — '+x.name})), sel, 'id="bb-select"', 'Cari akun…')}</div>
   </div>
   <div class="card">
     <div class="cardhead"><h2>Buku Besar — ${a?esc(a.code+' '+a.name):''}</h2><div style="display:flex;gap:8px;align-items:center;"><span class="hint">Saldo akhir: ${fmtRp(running)}</span>${toolbarHtml('bukubesar')}</div></div>
@@ -1938,7 +1971,11 @@ function renderRincian(){
 function addDays(dateStr, days){ const d=new Date(dateStr+'T00:00:00'); d.setDate(d.getDate()+Number(days||0)); return d.toISOString().slice(0,10); }
 function renderKartuRincian(mode){
   const isPiutang = mode==='piutang';
-  const parties = isPiutang? S.customers : S.vendors;
+  const allParties = isPiutang? S.customers : S.vendors;
+  const filterKey = isPiutang? 'kartuFilterPiutang' : 'kartuFilterHutang';
+  const filterVal = S.draft[filterKey] || '';
+  const parties = filterVal? allParties.filter(p=>p.id===filterVal) : allParties;
+  const filterOpts = allParties.map(p=>({value:p.id, label:p.kode+' — '+p.nama}));
   const docs = isPiutang? S.sales.filter(s=>s.status==='approved') : S.purchases;
   const today = todayISO();
   const bucketTotals = {'Belum Jatuh Tempo':0,'1-30 Hari':0,'31-60 Hari':0,'61-90 Hari':0,'>90 Hari':0};
@@ -1957,9 +1994,12 @@ function renderKartuRincian(mode){
     return `<div class="card"><div class="cardhead"><h2>${esc(p.kode)} — ${esc(p.nama)}</h2><span class="hint">Sisa: ${fmtRp(subtotal)}</span></div>
       <table><thead><tr><th>No.Faktur</th><th>Tgl Faktur</th><th>Tgl Jatuh Tempo</th><th class="num">Nilai</th><th class="num">Dibayar</th><th class="num">Sisa</th><th>Umur (Aging)</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   }).join('');
-  const grandTotal = docs.reduce((s,d)=>s+(d.total-d.dibayar),0);
+  const grandTotal = docs.filter(d=> !filterVal || (isPiutang?d.customerId:d.vendorId)===filterVal).reduce((s,d)=>s+(d.total-d.dibayar),0);
   return `
   <div class="note">Rincian saldo ${isPiutang?'piutang':'hutang'} per faktur yang masih terbuka (belum lunas), dikelompokkan menurut umur jatuh tempo (aging) — setara "Saldo ${isPiutang?'Piutang':'Hutang'} Rincian" pada Accurate.</div>
+  <div class="card"><div class="cardhead"><h2>Filter ${isPiutang?'Pelanggan':'Pemasok'}</h2></div>
+    <div style="max-width:340px">${comboHtml(filterOpts, filterVal, 'id="'+(isPiutang?'kartu-filter-piutang':'kartu-filter-hutang')+'"', 'Semua '+(isPiutang?'pelanggan':'pemasok')+'…')}</div>
+  </div>
   <div class="grid4">
     ${Object.entries(bucketTotals).map(([b,v])=>`<div class="stat"><div class="lbl">${esc(b)}</div><div class="val">${fmtRp(v)}</div></div>`).join('')}
   </div>
@@ -2609,6 +2649,16 @@ function renderDevMode(){
   </div>
 
   <div class="card">
+    <div class="cardhead"><h2>Edit HTML Langsung (Live Editor)</h2></div>
+    <div class="note">Ini kode HTML halaman ini <b>persis seperti kondisinya sekarang</b> (termasuk semua CSS &amp; JavaScript-nya, satu file utuh). Ubah apapun di sini, klik <b>Terapkan</b>, dan halaman akan langsung reload dengan versi yang sudah Anda ubah — di browser ini juga. Ini cara paling literal untuk "edit HTML langsung". Catatan: perubahan lewat cara ini hanya berlaku di tab browser ini sampai Anda reload halaman dari GitHub lagi — untuk permanen di semua device, unduh hasilnya (tombol di bawah) lalu upload manual ke GitHub.</div>
+    <textarea id="dev-html-editor" spellcheck="false" style="width:100%;min-height:340px;font-family:monospace;font-size:11.5px;padding:10px;border:1px solid var(--line);border-radius:8px;white-space:pre;"></textarea>
+    <div style="margin-top:10px;display:flex;gap:8px;">
+      <button class="btn btn-sm" type="button" data-action="devLoadHtml">↺ Muat Ulang dari Halaman Saat Ini</button>
+      <button class="btn btn-primary" type="button" data-action="devApplyHtml">⚡ Terapkan (Reload dengan HTML Ini)</button>
+    </div>
+  </div>
+
+  <div class="card">
     <div class="cardhead"><h2>Ekspor Salinan HTML Saat Ini</h2></div>
     <div class="note">Mengunduh salinan lengkap halaman ini <b>persis seperti kondisinya sekarang</b> (termasuk kustomisasi CSS/JS di atas, kalau sudah disimpan) sebagai satu file .html. Kalau Anda merasa kustomisasinya sudah pas, unduh file ini lalu <b>upload manual ke GitHub</b> (timpa file lama) supaya perubahan ini permanen jadi bagian dari kode sumber — bukan cuma jalan lewat suntikan kode di atas.</div>
     <button class="btn btn-sm" type="button" data-action="devDownloadHtml">⬇️ Unduh Salinan HTML</button>
@@ -2832,6 +2882,44 @@ document.addEventListener('click', async (e)=>{
   if(!t) return;
   const action = t.dataset.action, id = t.dataset.id;
 
+  if(action==='viewCustomer'){
+    const c = S.customers.find(x=>x.id===id); if(!c) return;
+    const sisa = S.sales.filter(s=>s.customerId===c.id && s.status==='approved').reduce((s,x)=>s+(x.total-x.dibayar),0);
+    showModal(`
+      <h3>${esc(c.kode)} — ${esc(c.nama)}</h3>
+      <table style="width:100%"><tbody>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Alamat</td><td>${esc(c.alamat1||'-')}${c.alamat2?'<br>'+esc(c.alamat2):''}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Kota / Kode Pos</td><td>${esc(c.kota||'-')} ${esc(c.kodepos||'')}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Telepon</td><td>${esc(c.telp1||'-')}${c.telp2?' / '+esc(c.telp2):''}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Fax</td><td>${esc(c.fax||'-')}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">NPWP</td><td>${esc(c.npwp||'-')}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Contact Person</td><td>${esc(c.kontak||'-')}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Termin</td><td>${c.termHari||0} hari</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Keterangan</td><td>${esc(c.keterangan||'-')}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Sisa Piutang</td><td><b>${fmtRp(sisa)}</b></td></tr>
+      </tbody></table>
+      <div class="modal-actions"><button class="btn btn-sm" type="button" data-action="closeModal">Tutup</button></div>`);
+    return;
+  }
+  if(action==='viewVendor'){
+    const vd = S.vendors.find(x=>x.id===id); if(!vd) return;
+    const sisa = S.purchases.filter(p=>p.vendorId===vd.id).reduce((s,x)=>s+(x.total-x.dibayar),0);
+    showModal(`
+      <h3>${esc(vd.kode)} — ${esc(vd.nama)}</h3>
+      <table style="width:100%"><tbody>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Alamat</td><td>${esc(vd.alamat1||'-')}${vd.alamat2?'<br>'+esc(vd.alamat2):''}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Kota / Kode Pos</td><td>${esc(vd.kota||'-')} ${esc(vd.kodepos||'')}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Telepon</td><td>${esc(vd.telp1||'-')}${vd.telp2?' / '+esc(vd.telp2):''}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Fax</td><td>${esc(vd.fax||'-')}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">NPWP</td><td>${esc(vd.npwp||'-')}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Contact Person</td><td>${esc(vd.kontak||'-')}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Termin</td><td>${vd.termHari||0} hari</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Keterangan</td><td>${esc(vd.keterangan||'-')}</td></tr>
+        <tr><td style="color:var(--sub);padding:4px 8px 4px 0;">Sisa Hutang</td><td><b>${fmtRp(sisa)}</b></td></tr>
+      </tbody></table>
+      <div class="modal-actions"><button class="btn btn-sm" type="button" data-action="closeModal">Tutup</button></div>`);
+    return;
+  }
   if(action==='closeModal'){ closeModal(); return; }
   if(action==='gotoOtorisasi'){ closeModal(); S.tab='otorisasi'; S.draft={}; render(); return; }
   if(action==='devReloadCollection'){ S.draft.devJsonDraft=undefined; render(); return; }
@@ -2915,6 +3003,22 @@ document.addEventListener('click', async (e)=>{
     applyCustomCode();
     alert('Kode kustom tersimpan & diterapkan.');
     render(); return;
+  }
+  if(action==='devLoadHtml'){
+    const ta = document.getElementById('dev-html-editor');
+    if(ta) ta.value = '<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+    return;
+  }
+  if(action==='devApplyHtml'){
+    if(!devUnlocked){ alert('Akses developer diperlukan.'); return; }
+    const ta = document.getElementById('dev-html-editor');
+    if(!ta || !ta.value.trim()){ alert('Editor masih kosong — klik "Muat Ulang dari Halaman Saat Ini" dulu, atau tempel HTML Anda sendiri.'); return; }
+    if(!confirm('Halaman akan langsung reload memakai HTML yang Anda tulis di editor ini, HANYA di tab browser ini. Data yang belum tersimpan bisa hilang. Lanjutkan?')) return;
+    const html = ta.value;
+    document.open();
+    document.write(html);
+    document.close();
+    return;
   }
   if(action==='devExportSql'){
     if(!devUnlocked){ alert('Akses developer diperlukan.'); return; }
@@ -3180,6 +3284,8 @@ document.addEventListener('change', (e)=>{
   if(sel.id==='ns-start'){ S.draft.nsStart=sel.value; render(); return; }
   if(sel.id==='ns-end'){ S.draft.nsEnd=sel.value; render(); return; }
   if(sel.id==='na-tahun'){ S.draft.naTahun=Number(sel.value); render(); return; }
+  if(sel.id==='kartu-filter-piutang'){ S.draft.kartuFilterPiutang=sel.value; render(); return; }
+  if(sel.id==='kartu-filter-hutang'){ S.draft.kartuFilterHutang=sel.value; render(); return; }
   if(sel.id==='lr-tahun'){ S.draft.lrTahun=Number(sel.value); render(); return; }
   if(sel.id==='lrb-tahun'){ S.draft.lrbTahun=Number(sel.value); render(); return; }
   if(sel.id==='lrb-bulan'){ S.draft.lrbBulan=Number(sel.value); render(); return; }
@@ -3259,6 +3365,11 @@ document.addEventListener('change', (e)=>{
 });
 document.addEventListener('input', (e)=>{
   const sel = e.target;
+  if(sel.classList && sel.classList.contains('combo-input')){
+    const wrap = sel.closest('.combo-wrap');
+    renderComboList(wrap, comboFilter(wrap, sel.value).slice(0,200));
+    return;
+  }
   if(sel.classList && sel.classList.contains('table-search')){
     const tid = sel.dataset.tid; const st = tableState(tid); const cursor = sel.selectionStart;
     st.q = sel.value; st.page = 1;
@@ -3406,6 +3517,40 @@ async function importPurchaseRows(rows){
 }
 
 /* ============================= ACTIONS: SUBMIT ============================= */
+document.addEventListener('focusin', (e)=>{
+  const sel = e.target;
+  if(sel.classList && sel.classList.contains('combo-input')){
+    const wrap = sel.closest('.combo-wrap');
+    renderComboList(wrap, comboFilter(wrap, sel.value).slice(0,200));
+  }
+});
+document.addEventListener('focusout', (e)=>{
+  const sel = e.target;
+  if(sel.classList && sel.classList.contains('combo-input')){
+    const wrap = sel.closest('.combo-wrap');
+    setTimeout(()=>{
+      const hidden = wrap.querySelector('.combo-hidden');
+      const options = COMBO_REGISTRY[wrap.dataset.comboId] || [];
+      const match = options.find(o=>String(o.value)===hidden.value);
+      sel.value = match ? match.label : '';
+      if(!match) hidden.value = '';
+      const list = wrap.querySelector('.combo-list'); if(list) list.classList.remove('open');
+    }, 180);
+  }
+});
+document.addEventListener('mousedown', (e)=>{
+  const item = e.target.closest('.combo-item');
+  if(!item) return;
+  e.preventDefault();
+  const wrap = item.closest('.combo-wrap');
+  const hidden = wrap.querySelector('.combo-hidden');
+  const visible = wrap.querySelector('.combo-input');
+  hidden.value = item.dataset.value;
+  visible.value = item.textContent;
+  const list = wrap.querySelector('.combo-list'); if(list) list.classList.remove('open');
+  hidden.dispatchEvent(new Event('change', {bubbles:true}));
+  hidden.dispatchEvent(new Event('input', {bubbles:true}));
+});
 document.addEventListener('submit', async (e)=>{
   e.preventDefault();
   const form = e.target;
