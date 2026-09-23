@@ -85,6 +85,8 @@
   .combo-item{padding:8px 10px;cursor:pointer;font-size:13px;}
   .combo-item:hover,.combo-item.active{background:rgba(18,150,126,.1);}
   .combo-empty{padding:8px 10px;color:var(--sub);font-size:12.5px;}
+  .app-footer{text-align:center;font-size:11px;color:var(--sub);opacity:.6;margin-top:18px;letter-spacing:.03em;}
+  .app-footer-sidebar{color:#7086ac;padding:10px 0 4px;margin-top:auto;}
   .modal-backdrop{position:fixed;inset:0;background:rgba(15,23,32,.55);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
   .modal-box{background:#fff;border-radius:12px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
   .modal-box h3{margin:0 0 10px;font-size:16px;}
@@ -193,6 +195,7 @@
       <div id="login-error" class="login-error"></div>
       <button class="btn btn-primary" type="submit" style="width:100%;margin-top:6px;">Masuk</button>
     </form>
+    <div class="app-footer">Developed by Wins</div>
   </div>
 </div>
 <div id="shell" style="display:none;">
@@ -201,6 +204,7 @@
   <div id="sidebar">
     <div class="brand"><div class="logo" id="brandLogo"></div><div><b id="brandName">Perusahaan</b><span>Program Akuntansi</span></div></div>
     <div id="navlist"></div>
+    <div class="app-footer app-footer-sidebar">Developed by Wins</div>
   </div>
   <div id="main">
     <div id="topbar"></div>
@@ -395,12 +399,50 @@ function hasPermission(action){
   if(currentUser.role==='pembelian') return pembelianAllowed.includes(action);
   return false;
 }
+function allRoles(){
+  const merged = {...ROLES};
+  (S.customRoles||[]).forEach(r=>{ merged[r.key] = r.label; });
+  return merged;
+}
+function allSelectableTabs(){
+  const list = [];
+  NAV.forEach(g=>{
+    g.items.forEach(([id,label])=>{
+      if(SUPERADMIN_ONLY_TABS.includes(id)) return;
+      list.push({id, label, group:g.group});
+    });
+  });
+  return list;
+}
+function customRoleModalHtml(existing){
+  const tabs = allSelectableTabs();
+  const groups = {};
+  const order = [];
+  tabs.forEach(t=>{ if(!groups[t.group]){ groups[t.group]=[]; order.push(t.group); } groups[t.group].push(t); });
+  const checklistHtml = order.map(gname=>`
+    <div style="margin-bottom:10px;"><b style="font-size:11.5px;color:var(--sub);text-transform:uppercase;letter-spacing:.04em;">${esc(gname)}</b>
+    ${groups[gname].map(it=>`<label style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:13.5px;"><input type="checkbox" class="role-tab-check" value="${it.id}" ${existing && (existing.allowedTabs||[]).includes(it.id)?'checked':''} style="width:auto;"> ${esc(it.label)}</label>`).join('')}
+    </div>`).join('');
+  return `
+    <h3>${existing?'Edit Role — '+esc(existing.label):'Tambah Role Baru'}</h3>
+    <div class="field"><label>Nama Role</label><input type="text" id="role-label-input" value="${existing?esc(existing.label):''}" placeholder="mis. Staff Gudang"></div>
+    <div class="hint" style="margin-bottom:10px;">Centang menu yang boleh diakses role ini:</div>
+    <div style="max-height:360px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;padding:10px;">${checklistHtml}</div>
+    <div class="modal-actions">
+      <button class="btn btn-sm" type="button" data-action="closeModal">Batal</button>
+      <button class="btn btn-primary" type="button" data-action="devSaveCustomRole" data-id="${existing?esc(existing.key):''}">💾 Simpan Role</button>
+    </div>`;
+}
 const SUPERADMIN_ONLY_TABS = ['setup-users','perbandingan'];
 function tabAllowed(tab, role){
   if(SUPERADMIN_ONLY_TABS.includes(tab)) return role==='superadmin';
-  const list = ALLOWED_TABS[role];
-  if(list===null || list===undefined) return true;
-  return list.includes(tab);
+  if(Object.prototype.hasOwnProperty.call(ALLOWED_TABS, role)){
+    const list = ALLOWED_TABS[role];
+    return list===null || list.includes(tab);
+  }
+  const custom = (S.customRoles||[]).find(r=>r.key===role);
+  if(custom) return (custom.allowedTabs||[]).includes(tab);
+  return false; // role tidak dikenal -> tidak ada akses sama sekali (fail-safe)
 }
 
 let S = { coa:[], journal:[], items:[], sales:[], purchases:[], assets:[], customers:[], vendors:[], returs:[], dpReceived:[], dpPaid:[], users:[], activityLog:[], meta:{}, tab:'dashboard', draft:{} };
@@ -511,6 +553,7 @@ async function loadAll(){
   S.dpPaid = await loadKey('dp-paid', []);
   S.users = await loadKey('users', []);
   S.activityLog = await loadKey('activity-log', []);
+  S.customRoles = await loadKey('custom-roles', []);
   S.meta = await loadKey('meta', {nama:'PT Henzu Jaya Sejahtera', alamat:'', npwp:'', telp:'', tahunBukuMulai:new Date().getFullYear(), mataUang:'IDR', ppnRate:11, prefixInvoice:'INV', prefixPO:'PO'});
   if(freshCoa){
     const cutoff = S.meta.saldoAwalCutoff || todayISO();
@@ -1208,7 +1251,7 @@ function renderSetupSaldoAwal(){
       <div class="field"><label style="display:flex;align-items:center;gap:6px;margin-top:22px;"><input type="checkbox" id="saldoawal-hapus-lain" style="width:auto;"> Hapus akun yang TIDAK ada di file yang diimpor (akun yang sudah punya transaksi tidak akan dihapus)</label></div>
     </div>
     <div class="toolbar">
-      <button type="button" class="btn btn-sm btn-imp" data-action="importCsv" data-id="saldoawal">Impor Excel/CSV (kode, saldoAwal)</button>
+      ${currentUser && currentUser.role==='superadmin' ? `<button type="button" class="btn btn-sm btn-imp" data-action="importCsv" data-id="saldoawal">Impor Excel/CSV (kode, saldoAwal)</button>` : ''}
       <button type="button" class="btn btn-sm btn-xls" data-action="exportExcel" data-id="setup-saldoawal">Ekspor Excel</button>
       <button type="button" class="btn btn-sm btn-pdf" data-action="exportPdf" data-id="setup-saldoawal">Unduh PDF</button>
     </div>
@@ -2116,7 +2159,8 @@ function renderPrintInvoice(){
 
 function toolbarHtml(key, opts={}){
   const importKind = opts.importKind || key;
-  const importBtn = opts.allowImport ? `<button type="button" class="btn btn-sm btn-imp" data-action="importCsv" data-id="${importKind}">Impor Excel/CSV</button>` : '';
+  const isSuperadmin = currentUser && currentUser.role==='superadmin';
+  const importBtn = (opts.allowImport && isSuperadmin) ? `<button type="button" class="btn btn-sm btn-imp" data-action="importCsv" data-id="${importKind}">Impor Excel/CSV</button>` : '';
   return `<div class="toolbar">${importBtn}<button type="button" class="btn btn-sm btn-xls" data-action="exportExcel" data-id="${key}">Ekspor Excel</button><button type="button" class="btn btn-sm btn-pdf" data-action="exportPdf" data-id="${key}">Unduh PDF</button></div>`;
 }
 async function printInvoice(saleId, mode){
@@ -2622,15 +2666,27 @@ function renderDevMode(){
   const col = DEV_COLLECTIONS.find(c=>c.key===selKey) || DEV_COLLECTIONS[0];
   const rawValue = S[col.prop];
   const collectionOpts = DEV_COLLECTIONS.map(c=>`<option value="${c.key}" ${c.key===selKey?'selected':''}>${esc(c.label)}</option>`).join('');
+  if(!S.draft.devSelected) S.draft.devSelected = {};
+  if(!S.draft.devSelected[selKey]) S.draft.devSelected[selKey] = {};
+  const selectedMap = S.draft.devSelected[selKey];
+  const selectedIdxArr = Object.keys(selectedMap).filter(k=>selectedMap[k]).map(Number);
+  const lockouts = S.meta.loginLockouts || {};
+  const lockedUsers = Object.keys(lockouts).filter(u=>lockouts[u] && lockouts[u].locked);
+  const lockedRows = lockedUsers.length
+    ? `<table><thead><tr><th>Username</th><th>Percobaan Gagal</th><th>Terakhir Dicoba</th><th></th></tr></thead><tbody>${lockedUsers.map(u=>`<tr><td>${esc(u)}</td><td class="num">${lockouts[u].failCount||0}</td><td>${lockouts[u].lastAttempt?new Date(lockouts[u].lastAttempt).toLocaleString('id-ID'):'-'}</td><td><span class="linklike" data-action="devUnlockLogin" data-id="${esc(u)}">Buka Blokir</span></td></tr>`).join('')}</tbody></table>`
+    : `<div class="empty">Tidak ada akun yang terkunci saat ini.</div>`;
+  const customRoleRows = (S.customRoles||[]).length
+    ? `<table><thead><tr><th>Nama Role</th><th>Kode</th><th class="num">Jumlah Menu</th><th></th></tr></thead><tbody>${(S.customRoles||[]).map(r=>`<tr><td>${esc(r.label)}</td><td>${esc(r.key)}</td><td class="num">${(r.allowedTabs||[]).length}</td><td><span class="linklike" data-action="devEditCustomRole" data-id="${esc(r.key)}">Edit</span> · <span class="linklike" data-action="devDeleteCustomRole" data-id="${esc(r.key)}">Hapus</span></td></tr>`).join('')}</tbody></table>`
+    : `<div class="empty">Belum ada role kustom.</div>`;
   let explorerBody;
   if(Array.isArray(rawValue)){
     const res = paginateTable('dev-'+selKey, rawValue.map((item,idx)=>({item,idx})), r=>JSON.stringify(r.item));
-    const rows = res.pageItems.map(r=>`<tr><td>${r.idx}</td><td>${devRecordSummary(r.item)}</td>
+    const rows = res.pageItems.map(r=>`<tr><td><input type="checkbox" class="dev-row-check" data-tid="${selKey}" data-idx="${r.idx}" ${selectedMap[r.idx]?'checked':''}></td><td>${r.idx}</td><td>${devRecordSummary(r.item)}</td>
       <td><span class="linklike" data-action="devEditRecord" data-tid="${selKey}" data-idx="${r.idx}">Edit</span> · <span class="linklike" data-action="devDeleteRecord" data-tid="${selKey}" data-idx="${r.idx}">Hapus</span></td></tr>`).join('');
     explorerBody = `
       <div style="margin-bottom:10px;"><button class="btn btn-sm" type="button" data-action="devAddRecord" data-tid="${selKey}">+ Tambah Record Baru</button></div>
       ${tableToolbar('dev-'+selKey, res, {searchPlaceholder:'Cari di semua field…'})}
-      ${rows? `<table><thead><tr><th style="width:50px">#</th><th>Ringkasan</th><th style="width:120px"></th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="empty">Koleksi ini kosong.</div>`}`;
+      ${rows? `<table><thead><tr><th style="width:30px"></th><th style="width:50px">#</th><th>Ringkasan</th><th style="width:120px"></th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="empty">Koleksi ini kosong.</div>`}`;
   } else {
     const jsonText = S.draft.devJsonDraft!==undefined ? S.draft.devJsonDraft : JSON.stringify(rawValue, null, 2);
     explorerBody = `
@@ -2648,6 +2704,28 @@ function renderDevMode(){
     <div class="cardhead"><h2>Database Explorer (CRUD)</h2></div>
     <div class="field" style="max-width:420px;margin-bottom:12px;"><label>Pilih Koleksi Data</label><select id="dev-collection-select">${collectionOpts}</select></div>
     ${explorerBody}
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><h2>👥 Kelola Role Kustom</h2></div>
+    <div class="note">Buat role baru selain Super Admin/Admin/Staff Pembelian, dengan menu yang bisa dipilih sendiri lewat checklist. Setelah disimpan, role ini otomatis muncul di pilihan Role saat Super Admin menambah user baru di Manajemen User — user dengan role itu hanya akan melihat menu yang dicentang.</div>
+    <div style="margin:12px 0;"><button class="btn btn-sm" type="button" data-action="devAddCustomRole">+ Tambah Role Baru</button></div>
+    ${customRoleRows}
+  </div>
+
+  <div class="card" style="border-color:#dc3545;">
+    <div class="cardhead"><h2>🔒 Login Terkunci (Rate Limiting)</h2></div>
+    <div class="note">Akun otomatis terkunci setelah ${LOGIN_MAX_ATTEMPTS} kali percobaan login gagal berturut-turut, dan tidak akan terbuka sendiri — hanya bisa dibuka lewat sini.</div>
+    ${lockedRows}
+  </div>
+
+  <div class="card" style="border-color:#dc3545;">
+    <div class="cardhead"><h2>🗑️ Hapus Data (Wipe)</h2></div>
+    <div class="note" style="background:#fdecea;border-color:#dc3545;">Menghapus data di sini bersifat <b>permanen</b> dan tidak bisa dibatalkan. Selalu backup dulu lewat menu Pusat Data sebelum lanjut.</div>
+    ${selectedIdxArr.length ? `<div style="margin-bottom:12px;"><button class="btn btn-sm" type="button" style="background:#dc3545;color:#fff;border-color:#dc3545;" data-action="devWipeSelected">Hapus ${selectedIdxArr.length} Data Terpilih dari "${esc(col.label)}"</button></div>` : `<div class="hint" style="margin-bottom:12px;">Centang baris di tabel Database Explorer di atas untuk menghapus data tertentu saja.</div>`}
+    <div>
+      <button class="btn btn-sm" type="button" style="background:#dc3545;color:#fff;border-color:#dc3545;" data-action="devWipeCollection" data-tid="${selKey}">⚠️ Hapus SEMUA Data di "${esc(col.label)}"</button>
+    </div>
   </div>
 
   <div class="card">
@@ -2803,9 +2881,9 @@ function renderSetupUsers(){
   if(!currentUser || currentUser.role!=='superadmin'){ return `<div class="empty">Halaman ini khusus Super Admin.</div>`; }
   const editing = S.draft.editing && S.draft.editing.user;
   const editU = editing ? S.users.find(u=>u.id===editing) : null;
-  const rows = S.users.map(u=>`<tr><td>${esc(u.username)}</td><td>${esc(u.nama)}</td><td><span class="badge badge-muted">${ROLES[u.role]||u.role}</span></td><td>${u.createdAt?fmtDate(u.createdAt.slice(0,10)):'-'}</td>
+  const rows = S.users.map(u=>`<tr><td>${esc(u.username)}</td><td>${esc(u.nama)}</td><td><span class="badge badge-muted">${allRoles()[u.role]||u.role}</span></td><td>${u.createdAt?fmtDate(u.createdAt.slice(0,10)):'-'}</td>
     <td><span class="linklike" data-action="editUser" data-id="${u.id}">Edit</span> · <span class="linklike" data-action="deleteUser" data-id="${u.id}">Hapus</span></td></tr>`).join('');
-  const roleOpts = Object.entries(ROLES).map(([k,v])=>`<option value="${k}" ${editU&&editU.role===k?'selected':''}>${v}</option>`).join('');
+  const roleOpts = Object.entries(allRoles()).map(([k,v])=>`<option value="${k}" ${editU&&editU.role===k?'selected':''}>${v}</option>`).join('');
   const logRows = (S.activityLog||[]).slice().reverse().slice(0,60).map(l=>`<tr><td>${new Date(l.waktu).toLocaleString('id-ID')}</td><td>${esc(l.nama||l.username)}</td><td>${esc(l.desc)}</td></tr>`).join('');
   return `
   <div class="note">Hanya Super Admin yang bisa mengelola user. Password disimpan dalam bentuk hash (SHA-256) di penyimpanan lokal aplikasi — cukup untuk memisahkan akses antar staf, namun bukan pengganti sistem otentikasi server yang sesungguhnya.</div>
@@ -2874,16 +2952,35 @@ async function tryDevModeUnlock(){
   document.getElementById('shell').style.display = 'flex';
   render();
 }
+const LOGIN_MAX_ATTEMPTS = 5;
 document.getElementById('form-login').addEventListener('submit', async (e)=>{
   e.preventDefault();
   const fd = new FormData(e.target);
   const username = fd.get('username').trim();
   const password = fd.get('password');
-  const user = S.users.find(u=>u.username.toLowerCase()===username.toLowerCase());
   const errEl = document.getElementById('login-error');
-  if(!user){ errEl.textContent = 'Username tidak ditemukan.'; return; }
-  const hash = await hashPassword(password);
-  if(hash !== user.passwordHash){ errEl.textContent = 'Password salah.'; return; }
+  const ukey = username.toLowerCase();
+  if(!S.meta.loginLockouts) S.meta.loginLockouts = {};
+  const lockInfo = S.meta.loginLockouts[ukey];
+  if(lockInfo && lockInfo.locked){
+    errEl.textContent = 'Akun ini terkunci karena terlalu banyak percobaan gagal. Hubungi developer/pemilik sistem untuk membuka blokirnya.';
+    return;
+  }
+  const user = S.users.find(u=>u.username.toLowerCase()===ukey);
+  const hash = user ? await hashPassword(password) : null;
+  const valid = user && hash===user.passwordHash;
+  if(!valid){
+    const cur = S.meta.loginLockouts[ukey] || {failCount:0, locked:false};
+    cur.failCount = (cur.failCount||0) + 1;
+    cur.lastAttempt = new Date().toISOString();
+    if(cur.failCount >= LOGIN_MAX_ATTEMPTS){ cur.locked = true; }
+    S.meta.loginLockouts[ukey] = cur;
+    await saveKey('meta', S.meta);
+    if(cur.locked){ errEl.textContent = 'Akun ini terkunci karena terlalu banyak percobaan gagal. Hubungi developer/pemilik sistem untuk membuka blokirnya.'; }
+    else{ errEl.textContent = (user? 'Password salah.' : 'Username tidak ditemukan.') + ' (Percobaan '+cur.failCount+'/'+LOGIN_MAX_ATTEMPTS+')'; }
+    return;
+  }
+  if(S.meta.loginLockouts[ukey]){ delete S.meta.loginLockouts[ukey]; await saveKey('meta', S.meta); }
   currentUser = {id:user.id, username:user.username, nama:user.nama, role:user.role};
   S.tab = firstAllowedTab(currentUser.role);
   await logActivity('Login');
@@ -2986,6 +3083,87 @@ document.addEventListener('click', async (e)=>{
     if(!confirm('HAPUS record ini dari "'+col.key+'"?\n\n'+devRecordSummary(record).replace(/<[^>]+>/g,'')+'\n\nTindakan ini permanen dan tidak bisa dibatalkan.')) return;
     S[col.prop].splice(idx,1);
     await saveKey(col.key, S[col.prop]);
+    render(); return;
+  }
+  if(action==='devAddCustomRole'){
+    if(!devUnlocked){ alert('Akses developer diperlukan.'); return; }
+    showModal(customRoleModalHtml(null), {large:true});
+    return;
+  }
+  if(action==='devEditCustomRole'){
+    if(!devUnlocked){ alert('Akses developer diperlukan.'); return; }
+    const role = (S.customRoles||[]).find(r=>r.key===id);
+    if(!role) return;
+    showModal(customRoleModalHtml(role), {large:true});
+    return;
+  }
+  if(action==='devSaveCustomRole'){
+    if(!devUnlocked){ alert('Akses developer diperlukan.'); return; }
+    const labelInput = document.getElementById('role-label-input');
+    const label = labelInput.value.trim();
+    if(!label){ alert('Nama role harus diisi.'); return; }
+    const checks = Array.from(document.querySelectorAll('.role-tab-check:checked')).map(c=>c.value);
+    if(!checks.length){ alert('Pilih minimal satu menu untuk role ini.'); return; }
+    if(!S.customRoles) S.customRoles=[];
+    if(id){
+      const role = S.customRoles.find(r=>r.key===id);
+      if(role){ role.label=label; role.allowedTabs=checks; }
+    } else {
+      let baseKey = label.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || 'role';
+      let key = baseKey, n=1;
+      const allKeys = new Set([...Object.keys(ROLES), ...S.customRoles.map(r=>r.key)]);
+      while(allKeys.has(key)){ n++; key = baseKey+'-'+n; }
+      S.customRoles.push({key, label, allowedTabs:checks});
+    }
+    await saveKey('custom-roles', S.customRoles);
+    closeModal();
+    render(); return;
+  }
+  if(action==='devDeleteCustomRole'){
+    if(!devUnlocked){ alert('Akses developer diperlukan.'); return; }
+    const role = (S.customRoles||[]).find(r=>r.key===id);
+    if(!role) return;
+    const usersWithRole = S.users.filter(u=>u.role===id);
+    let msg = 'Hapus role "'+role.label+'"?';
+    if(usersWithRole.length) msg += '\n\nPERINGATAN: '+usersWithRole.length+' user masih memakai role ini ('+usersWithRole.map(u=>u.username).join(', ')+'). Mereka akan kehilangan akses ke SEMUA menu sampai role-nya diganti manual lewat Manajemen User.';
+    if(!confirm(msg)) return;
+    S.customRoles = S.customRoles.filter(r=>r.key!==id);
+    await saveKey('custom-roles', S.customRoles);
+    render(); return;
+  }
+  if(action==='devUnlockLogin'){
+    if(!devUnlocked){ alert('Akses developer diperlukan.'); return; }
+    if(S.meta.loginLockouts && S.meta.loginLockouts[id]){
+      delete S.meta.loginLockouts[id];
+      await saveKey('meta', S.meta);
+      alert('Blokir untuk "'+id+'" sudah dibuka.');
+    }
+    render(); return;
+  }
+  if(action==='devWipeSelected'){
+    if(!devUnlocked){ alert('Akses developer diperlukan.'); return; }
+    const col = DEV_COLLECTIONS.find(c=>c.key===t.dataset.tid);
+    const selectedMap = (S.draft.devSelected && S.draft.devSelected[col.key]) || {};
+    const idxArr = Object.keys(selectedMap).filter(k=>selectedMap[k]).map(Number).sort((a,b)=>b-a);
+    if(!idxArr.length){ alert('Tidak ada data yang dicentang.'); return; }
+    const typed = prompt('Anda akan menghapus PERMANEN '+idxArr.length+' record dari "'+col.label+'". Ketik HAPUS untuk konfirmasi:');
+    if(typed!=='HAPUS'){ alert('Dibatalkan (teks konfirmasi tidak cocok).'); return; }
+    idxArr.forEach(idx=>{ S[col.prop].splice(idx,1); });
+    await saveKey(col.key, S[col.prop]);
+    S.draft.devSelected[col.key] = {};
+    alert('Berhasil menghapus '+idxArr.length+' record.');
+    render(); return;
+  }
+  if(action==='devWipeCollection'){
+    if(!devUnlocked){ alert('Akses developer diperlukan.'); return; }
+    const col = DEV_COLLECTIONS.find(c=>c.key===t.dataset.tid);
+    const count = Array.isArray(S[col.prop]) ? S[col.prop].length : 1;
+    const typed = prompt('Anda akan menghapus SEMUA data di "'+col.label+'" ('+count+' record) secara PERMANEN. Ini tidak bisa dibatalkan. Ketik HAPUS SEMUA untuk konfirmasi:');
+    if(typed!=='HAPUS SEMUA'){ alert('Dibatalkan (teks konfirmasi tidak cocok).'); return; }
+    if(Array.isArray(S[col.prop])){ S[col.prop] = []; } else { S[col.prop] = {}; }
+    await saveKey(col.key, S[col.prop]);
+    if(S.draft.devSelected) S.draft.devSelected[col.key] = {};
+    alert('Koleksi "'+col.label+'" sudah dikosongkan.');
     render(); return;
   }
   if(action==='devExit'){
@@ -3142,7 +3320,10 @@ document.addEventListener('click', async (e)=>{
     if(id==='journal'){ csv='tanggal,no,keterangan,sumber,akun,debit,kredit\n'+S.journal.flatMap(e=>e.lines.map(l=>`${e.tanggal},${e.no},"${e.keterangan}",${e.sumber},${l.akun},${l.debit||0},${l.credit||0}`)).join('\n'); filename='jurnal.csv'; }
     download(filename, csv); return;
   }
-  if(action==='importCsv'){ document.getElementById('file-import-'+id).click(); return; }
+  if(action==='importCsv'){
+    if(!currentUser || currentUser.role!=='superadmin'){ alert('Hanya Super Admin yang dapat mengimpor data.'); return; }
+    document.getElementById('file-import-'+id).click(); return;
+  }
 
   if(action==='deleteAkun'){
     const dipakai = S.journal.some(e=> e.sumber!=='saldo-awal' && e.lines.some(l=>l.akun===id));
@@ -3288,7 +3469,14 @@ const HEADER_FORMS = new Set(['form-pembelian','form-penjualan','form-biaya']);
 document.addEventListener('change', (e)=>{
   const sel = e.target;
   if(sel.classList && sel.classList.contains('table-filter')){ const st=tableState(sel.dataset.tid); st.filter=sel.value; st.page=1; render(); return; }
-  if(sel.id==='dev-collection-select'){ S.draft.devCollection = sel.value; S.draft.devJsonDraft = undefined; render(); return; }
+  if(sel.id==='dev-collection-select'){ S.draft.devCollection = sel.value; S.draft.devJsonDraft = undefined; S.draft.devSelected = {}; render(); return; }
+  if(sel.classList && sel.classList.contains('dev-row-check')){
+    const tid = sel.dataset.tid, idx = sel.dataset.idx;
+    if(!S.draft.devSelected) S.draft.devSelected = {};
+    if(!S.draft.devSelected[tid]) S.draft.devSelected[tid] = {};
+    S.draft.devSelected[tid][idx] = sel.checked;
+    render(); return;
+  }
   if(sel.form && HEADER_FORMS.has(sel.form.id) && sel.name){
     if(!S.draft.formHeaders) S.draft.formHeaders={};
     if(!S.draft.formHeaders[sel.form.id]) S.draft.formHeaders[sel.form.id]={};
@@ -3426,6 +3614,7 @@ function buildColumnMap(headerRow, fieldAliases){
   return map;
 }
 async function handleImportRows(kind, rows){
+  if(!currentUser || currentUser.role!=='superadmin'){ alert('Hanya Super Admin yang dapat mengimpor data.'); return; }
   if(!rows || !rows.length) return;
   const hasHeader = rows[0] && /kode|code|nama|name|tanggal|faktur|no_part|description/i.test(rows[0].join(''));
   const body = hasHeader ? rows.slice(1) : rows;
@@ -3791,7 +3980,7 @@ document.addEventListener('submit', async (e)=>{
     const passwordHash = await hashPassword(password);
     S.users.push({id:uid(), username, nama, role, passwordHash, createdAt:new Date().toISOString()});
     await saveKey('users',S.users);
-    await logActivity('Tambah user '+username+' ('+ROLES[role]+')');
+    await logActivity('Tambah user '+username+' ('+(allRoles()[role]||role)+')');
     render(); return;
   }
 
