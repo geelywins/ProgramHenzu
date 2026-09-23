@@ -3411,22 +3411,85 @@ document.addEventListener('input', (e)=>{
   if(sel.dataset && sel.dataset.pi!==undefined && sel.dataset.pi==='noBatch'){ const i=Number(sel.dataset.i); S.draft.purchaseItems[i].noBatch=sel.value; }
 });
 
+// Deteksi kolom otomatis berdasarkan nama header (tidak peduli urutan) — supaya import bisa langsung
+// pakai file spreadsheet asli dari sistem lama (mis. No_part/Description untuk barang, Kode/Nama untuk pelanggan)
+// tanpa perlu diformat ulang dulu. Kalau header tidak dikenali, jatuh balik ke urutan kolom lama.
+function normHeader(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,''); }
+function buildColumnMap(headerRow, fieldAliases){
+  const headerNorm = (headerRow||[]).map(normHeader);
+  const map = {};
+  for(const field in fieldAliases){
+    let idx = -1;
+    for(const alias of fieldAliases[field]){ idx = headerNorm.indexOf(normHeader(alias)); if(idx!==-1) break; }
+    map[field] = idx;
+  }
+  return map;
+}
 async function handleImportRows(kind, rows){
   if(!rows || !rows.length) return;
-  const hasHeader = rows[0] && /kode|code|nama|name|tanggal|faktur/i.test(rows[0].join(''));
+  const hasHeader = rows[0] && /kode|code|nama|name|tanggal|faktur|no_part|description/i.test(rows[0].join(''));
   const body = hasHeader ? rows.slice(1) : rows;
+  const get = (row, map, field, posIdx)=>{ const i = hasHeader ? map[field] : posIdx; return (i!==undefined && i>=0 && i<row.length) ? row[i] : ''; };
   if(kind==='coa'){
     let n=0; body.forEach(c=>{ if(!c[0]) return; if(S.coa.some(a=>a.code===c[0])) return; S.coa.push({code:c[0],name:c[1]||c[0],type:c[2]||'BEBAN',kelompok:c[3]||'',saldoAwal:Number(c[4])||0}); n++; });
     await saveKey('coa',S.coa); alert('Berhasil impor '+n+' akun.');
   } else if(kind==='customers'){
-    let n=0; body.forEach(c=>{ if(!c[0]) return; if(S.customers.some(x=>x.kode===c[0])) return; S.customers.push({id:uid(),kode:c[0],nama:c[1]||c[0],alamat1:c[2]||'',alamat2:c[3]||'',kota:c[4]||'',kodepos:c[5]||'',telp1:c[6]||'',telp2:c[7]||'',fax:c[8]||'',npwp:c[9]||'',kontak:c[10]||'',keterangan:c[11]||'',termHari:Number(c[12])||0,saldoAwal:Number(c[13])||0}); n++; });
-    await saveKey('customers',S.customers); alert('Berhasil impor '+n+' pelanggan.');
+    const map = hasHeader ? buildColumnMap(rows[0], {
+      kode:['kode','code'], nama:['nama','name'], alamat1:['alamat','alamat1','address'], alamat2:['alamat2'],
+      kota:['kota','city'], kodepos:['kodepos','zip','zipcode'], telp1:['notelepon','telepon','telp','telp1','phone'],
+      telp2:['telp2'], fax:['nofax','fax'], npwp:['nonpwp','npwp'], kontak:['contactperson','kontak','cp'],
+      keterangan:['keterangan','notes'], termHari:['termhari','termin'], saldoAwal:['saldoawal']
+    }) : {};
+    let n=0, skip=0;
+    body.forEach(c=>{
+      const kode = String(get(c,map,'kode',0)||'').trim(); if(!kode) return;
+      if(S.customers.some(x=>x.kode===kode)){ skip++; return; }
+      S.customers.push({id:uid(), kode, nama:String(get(c,map,'nama',1)||kode).trim(),
+        alamat1:String(get(c,map,'alamat1',2)||'').trim(), alamat2:String(get(c,map,'alamat2',3)||'').trim(),
+        kota:String(get(c,map,'kota',4)||'').trim(), kodepos:String(get(c,map,'kodepos',5)||'').trim(),
+        telp1:String(get(c,map,'telp1',6)||'').trim(), telp2:String(get(c,map,'telp2',7)||'').trim(),
+        fax:String(get(c,map,'fax',8)||'').trim(), npwp:String(get(c,map,'npwp',9)||'').trim(),
+        kontak:String(get(c,map,'kontak',10)||'').trim(), keterangan:String(get(c,map,'keterangan',11)||'').trim(),
+        termHari:Number(get(c,map,'termHari',12))||0, saldoAwal:Number(get(c,map,'saldoAwal',13))||0}); n++;
+    });
+    await saveKey('customers',S.customers); alert('Berhasil impor '+n+' pelanggan.'+(skip?' ('+skip+' dilewati karena kode sudah ada.)':''));
   } else if(kind==='vendors'){
-    let n=0; body.forEach(c=>{ if(!c[0]) return; if(S.vendors.some(x=>x.kode===c[0])) return; S.vendors.push({id:uid(),kode:c[0],nama:c[1]||c[0],alamat1:c[2]||'',alamat2:c[3]||'',kota:c[4]||'',kodepos:c[5]||'',telp1:c[6]||'',telp2:c[7]||'',fax:c[8]||'',npwp:c[9]||'',kontak:c[10]||'',keterangan:c[11]||'',termHari:Number(c[12])||0,saldoAwal:Number(c[13])||0}); n++; });
-    await saveKey('vendors',S.vendors); alert('Berhasil impor '+n+' pemasok.');
+    const map = hasHeader ? buildColumnMap(rows[0], {
+      kode:['kode','code'], nama:['nama','name'], alamat1:['alamat','alamat1','address'], alamat2:['alamat2'],
+      kota:['kota','city'], kodepos:['kodepos','zip'], telp1:['notelepon','telepon','telp','telp1','phone'],
+      telp2:['telp2'], fax:['nofax','fax'], npwp:['nonpwp','npwp'], kontak:['contactperson','kontak','cp'],
+      keterangan:['keterangan','notes'], termHari:['termhari','termin'], saldoAwal:['saldoawal']
+    }) : {};
+    let n=0, skip=0;
+    body.forEach(c=>{
+      const kode = String(get(c,map,'kode',0)||'').trim(); if(!kode) return;
+      if(S.vendors.some(x=>x.kode===kode)){ skip++; return; }
+      S.vendors.push({id:uid(), kode, nama:String(get(c,map,'nama',1)||kode).trim(),
+        alamat1:String(get(c,map,'alamat1',2)||'').trim(), alamat2:String(get(c,map,'alamat2',3)||'').trim(),
+        kota:String(get(c,map,'kota',4)||'').trim(), kodepos:String(get(c,map,'kodepos',5)||'').trim(),
+        telp1:String(get(c,map,'telp1',6)||'').trim(), telp2:String(get(c,map,'telp2',7)||'').trim(),
+        fax:String(get(c,map,'fax',8)||'').trim(), npwp:String(get(c,map,'npwp',9)||'').trim(),
+        kontak:String(get(c,map,'kontak',10)||'').trim(), keterangan:String(get(c,map,'keterangan',11)||'').trim(),
+        termHari:Number(get(c,map,'termHari',12))||0, saldoAwal:Number(get(c,map,'saldoAwal',13))||0}); n++;
+    });
+    await saveKey('vendors',S.vendors); alert('Berhasil impor '+n+' pemasok.'+(skip?' ('+skip+' dilewati karena kode sudah ada.)':''));
   } else if(kind==='items'){
-    let n=0; body.forEach(c=>{ if(!c[0]) return; if(S.items.some(x=>x.kode===c[0])) return; S.items.push({id:uid(),kode:c[0],nama:c[1]||c[0],satuan:c[2]||'pcs',akunPenjualan:c[3]||'4000',stok:Number(c[4])||0,hpp:Number(c[5])||0,hargaJual:Number(c[6])||0}); n++; });
-    await saveKey('items',S.items); alert('Berhasil impor '+n+' barang.');
+    const map = hasHeader ? buildColumnMap(rows[0], {
+      kode:['kode','code','nopart'], nama:['nama','name','description','deskripsi'], satuan:['satuan','unit','sat'],
+      akunPenjualan:['akunpenjualan','akun'], stok:['stok','stock','qty'],
+      hpp:['hpp','hargabeli','hargabelippn','hargabeli+ppn','cost'],
+      hargaJual:['hargajual','hargajualsblmppn','hargajualsblmppn','sellprice'], stokMin:['stokmin','minstock']
+    }) : {};
+    let n=0, skip=0;
+    body.forEach(c=>{
+      const kode = String(get(c,map,'kode',0)||'').trim(); if(!kode) return;
+      if(S.items.some(x=>x.kode===kode)){ skip++; return; }
+      S.items.push({id:uid(), kode, nama:String(get(c,map,'nama',1)||kode).trim(),
+        satuan:String(get(c,map,'satuan',2)||'pcs').trim(), akunPenjualan:String(get(c,map,'akunPenjualan',3)||'4000').trim(),
+        stok:Number(get(c,map,'stok',4))||0, hpp:Number(get(c,map,'hpp',5))||0, hargaJual:Number(get(c,map,'hargaJual',6))||0,
+        stokMin:Number(get(c,map,'stokMin',7))||0}); n++;
+    });
+    await saveKey('items',S.items); alert('Berhasil impor '+n+' barang.'+(skip?' ('+skip+' dilewati karena kode sudah ada.)':''));
   } else if(kind==='penjualan'){
     await importSalesRows(body);
   } else if(kind==='pembelian'){
