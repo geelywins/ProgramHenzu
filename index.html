@@ -1278,7 +1278,6 @@ function renderPembelian(){
   }).join('');
   const subtotal = S.draft.purchaseItems.reduce((s,l)=>s+Math.round((l.qty||0)*(l.harga||0)*(1-(l.diskon||0)/100)),0);
   const ppn = Math.round(subtotal*ppnRate());
-  const vendorOptions = S.vendors.map(v=>`<option value="${v.id}">${esc(v.kode)} — ${esc(v.nama)}</option>`).join('');
   const sortedPurchases = S.purchases.slice().reverse();
   const resP = paginateTable('riwayat-pembelian', sortedPurchases, p=>p.noFaktur+' '+p.vendorNama);
   const rows = resP.pageItems.map(p=>{
@@ -1340,7 +1339,6 @@ function renderPenjualan(){
   }).join('');
   const subtotal = S.draft.saleItems.reduce((s,l)=>s+Math.round((l.qty||0)*(l.harga||0)*(1-(l.diskon||0)/100)),0);
   const ppn = Math.round(subtotal*ppnRate());
-  const customerOptions = S.customers.map(c=>`<option value="${c.id}">${esc(c.kode)} — ${esc(c.nama)}</option>`).join('');
   const sortedSales = S.sales.slice().reverse();
   const filterOptsS = '<option value="">Semua Status</option><option value="pending" '+(tableState('riwayat-penjualan').filter==='pending'?'selected':'')+'>Pending Otorisasi</option><option value="approved" '+(tableState('riwayat-penjualan').filter==='approved'?'selected':'')+'>Disetujui</option><option value="rejected" '+(tableState('riwayat-penjualan').filter==='rejected'?'selected':'')+'>Ditolak</option>';
   const resS = paginateTable('riwayat-penjualan', sortedSales, s=>s.noFaktur+' '+s.customerNama, (s,f)=> f==='pending'? (s.status==='pending'||!s.status) : s.status===f);
@@ -1390,7 +1388,7 @@ function renderStock(){
     const low = (it.stokMin||0)>0 && it.stok<=it.stokMin;
     return `<tr${low?' style="background:#fff3cd"':''}><td>${esc(it.kode)}</td><td>${esc(it.nama)}${low?' ⚠️':''}</td><td>${esc(it.satuan)}</td><td class="num">${it.stok}</td><td class="num">${it.stokMin||0}</td><td class="num">${fmtRp(it.hpp)}</td><td class="num">${fmtRp(it.stok*it.hpp)}</td></tr>`;
   }).join('');
-  const itemOptions = S.items.map(it=>`<option value="${it.id}">${it.kode} — ${it.nama} (stok ${it.stok})</option>`).join('');
+  const itemComboOptsStock = S.items.map(it=>({value:it.id, label:it.kode+' — '+it.nama+' (stok '+it.stok+')'}));
   const adjustments = S.journal.filter(e=>e.sumber==='stok-opname').slice().reverse().slice(0,15)
     .map(e=>`<tr><td>${fmtDate(e.tanggal)}</td><td>${esc(e.keterangan)}</td></tr>`).join('');
   return `
@@ -1401,7 +1399,7 @@ function renderStock(){
     <div class="collapse-body">
     <form id="form-stock-adjust" class="grid4">
       <div class="field"><label>Tanggal</label><input type="date" name="tanggal" value="${todayISO()}" required></div>
-      <div class="field" style="flex:2"><label>Barang</label><select name="itemId" required><option value="">Pilih barang…</option>${itemOptions}</select></div>
+      <div class="field" style="flex:2"><label>Barang</label>${comboHtml(itemComboOptsStock, '', 'name="itemId" required', 'Cari barang…')}</div>
       <div class="field"><label>Jenis</label><select name="jenis"><option value="tambah">Tambah (stok fisik lebih)</option><option value="kurang">Kurang (stok fisik kurang)</option></select></div>
       <div class="field"><label>Qty Selisih</label><input type="number" name="qty" required></div>
       <div class="field" style="grid-column:1/-1"><label>Keterangan</label><input type="text" name="keterangan" placeholder="mis. Hasil stok opname bulanan" required></div>
@@ -1481,7 +1479,7 @@ function renderKasBank(){
   const lines = linesForAccount(which);
   let running=0;
   const rows = lines.map(l=>{ running += l.debit-l.credit; return `<tr><td>${fmtDate(l.date)}</td><td>${esc(l.no)}</td><td>${esc(l.ket)}</td><td class="num">${l.debit?fmtRp(l.debit):''}</td><td class="num">${l.credit?fmtRp(l.credit):''}</td><td class="num">${fmtRp(running)}</td></tr>`; }).join('');
-  const options = S.coa.map(a=>`<option value="${a.code}">${a.code} — ${esc(a.name)}</option>`).join('');
+  const akunLawanOpts = S.coa.map(a=>({value:a.code, label:a.code+' — '+a.name}));
   return `
   <div class="grid2">
     <div class="stat"><div class="lbl">Saldo Kas (1000)</div><div class="val">${fmtRp(saldoAkun('1000'))}</div></div>
@@ -1497,7 +1495,7 @@ function renderKasBank(){
         <div class="field"><label>Jumlah</label><input type="text" inputmode="numeric" class="moneyfmt" name="jumlah" required></div>
       </div>
       <div class="grid2">
-        <div class="field"><label>Akun Lawan</label><select name="akunLawan">${options}</select></div>
+        <div class="field"><label>Akun Lawan</label>${comboHtml(akunLawanOpts, '', 'name="akunLawan"', 'Cari akun…')}</div>
         <div class="field"><label>Keterangan</label><input type="text" name="keterangan" required placeholder="mis. Setor modal / tarik tunai"></div>
       </div>
       <button class="btn btn-primary" type="submit">Simpan Transaksi</button>
@@ -1738,7 +1736,7 @@ function renderBBPiutang(){
     ${summaryRows? `<table><thead><tr><th>Pelanggan</th><th class="num">Total Tagihan</th><th class="num">Dibayar</th><th class="num">Sisa Piutang</th></tr></thead><tbody>${summaryRows}</tbody></table>`:`<div class="empty">Belum ada pelanggan.</div>`}
   </div>
   <div class="card"><div class="cardhead"><h2>Lihat Detail per Pelanggan</h2></div>
-    <select id="bbp-select"><option value="">Pilih pelanggan…</option>${S.customers.map(c=>`<option value="${c.id}" ${c.id===sel?'selected':''}>${esc(c.nama)}</option>`).join('')}</select>
+    <div style="max-width:340px">${comboHtml(S.customers.map(c=>({value:c.id,label:c.nama})), sel, 'id="bbp-select"', 'Cari pelanggan…')}</div>
   </div>
   ${detail}`;
 }
@@ -1769,7 +1767,7 @@ function renderBBHutang(){
     ${summaryRows? `<table><thead><tr><th>Pemasok</th><th class="num">Total Tagihan</th><th class="num">Dibayar</th><th class="num">Sisa Hutang</th></tr></thead><tbody>${summaryRows}</tbody></table>`:`<div class="empty">Belum ada pemasok.</div>`}
   </div>
   <div class="card"><div class="cardhead"><h2>Lihat Detail per Pemasok</h2></div>
-    <select id="bbh-select"><option value="">Pilih pemasok…</option>${S.vendors.map(v=>`<option value="${v.id}" ${v.id===sel?'selected':''}>${esc(v.nama)}</option>`).join('')}</select>
+    <div style="max-width:340px">${comboHtml(S.vendors.map(v=>({value:v.id,label:v.nama})), sel, 'id="bbh-select"', 'Cari pemasok…')}</div>
   </div>
   ${detail}`;
 }
@@ -2052,7 +2050,7 @@ function renderLaporanPenjualan(){
     <div class="row">
       <div class="field"><label>Dari</label><input type="date" id="lp-start" value="${start}"></div>
       <div class="field"><label>Sampai</label><input type="date" id="lp-end" value="${end}"></div>
-      <div class="field" style="flex:2"><label>Konsumen</label><select id="lp-customer"><option value="">Semua Konsumen</option>${S.customers.map(c=>`<option value="${c.id}" ${custFilter===c.id?'selected':''}>${esc(c.nama)}</option>`).join('')}</select></div>
+      <div class="field" style="flex:2"><label>Konsumen</label>${comboHtml([{value:'',label:'Semua Konsumen'}, ...S.customers.map(c=>({value:c.id,label:c.nama}))], custFilter, 'id="lp-customer"', 'Cari konsumen…')}</div>
     </div>
   </div>
   <div class="card"><div class="cardhead"><h2>Laporan Penjualan (${rows.length} baris)</h2>${toolbarHtml('laporanpenjualan')}</div>
@@ -2098,7 +2096,7 @@ function renderPrintInvoice(){
   return `
   <div class="note">Daftar invoice yang sudah diotorisasi, diurutkan dari yang <b>terbaru di atas</b>. Setiap kali dicetak/diunduh, penghitung "Jumlah Cetak" bertambah otomatis — berguna untuk kontrol supaya invoice tidak tercetak berkali-kali tanpa sepengetahuan.</div>
   <div class="card"><div class="cardhead"><h2>Filter</h2></div>
-    <select id="pi-customer"><option value="">Semua Konsumen</option>${S.customers.map(c=>`<option value="${c.id}" ${filterCust===c.id?'selected':''}>${esc(c.nama)}</option>`).join('')}</select>
+    ${comboHtml([{value:'',label:'Semua Konsumen'}, ...S.customers.map(c=>({value:c.id,label:c.nama}))], filterCust, 'id="pi-customer"', 'Cari konsumen…')}
   </div>
   <div class="card"><div class="cardhead"><h2>Print Invoice (${list.length})</h2></div>
     ${rows? `<table><thead><tr><th>Tanggal</th><th>No.Faktur</th><th>Konsumen</th><th class="num">Grand Total</th><th class="num">Jumlah Cetak</th><th>Terakhir Dicetak</th><th>Aksi</th></tr></thead><tbody>${rows}</tbody></table>` : `<div class="empty">Belum ada invoice yang bisa dicetak.</div>`}
@@ -2691,7 +2689,7 @@ function renderLaporanPembelian(){
     <div class="row">
       <div class="field"><label>Dari</label><input type="date" id="lpb-start" value="${start}"></div>
       <div class="field"><label>Sampai</label><input type="date" id="lpb-end" value="${end}"></div>
-      <div class="field" style="flex:2"><label>Pemasok</label><select id="lpb-vendor"><option value="">Semua Pemasok</option>${S.vendors.map(v=>`<option value="${v.id}" ${vendFilter===v.id?'selected':''}>${esc(v.nama)}</option>`).join('')}</select></div>
+      <div class="field" style="flex:2"><label>Pemasok</label>${comboHtml([{value:'',label:'Semua Pemasok'}, ...S.vendors.map(v=>({value:v.id,label:v.nama}))], vendFilter, 'id="lpb-vendor"', 'Cari pemasok…')}</div>
     </div>
   </div>
   <div class="card"><div class="cardhead"><h2>Laporan Pembelian (${rows.length} baris)</h2>${toolbarHtml('laporanpembelian')}</div>
